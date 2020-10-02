@@ -1,4 +1,4 @@
-name: 'Code Climate'
+name: 'Upload Coverage to Code Climate'
 description: 'Uploads coverage info to Code Climate'
 author: 'Caff'
 branding:
