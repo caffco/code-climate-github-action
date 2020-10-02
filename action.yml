@@ -1,0 +1,34 @@
+name: 'Code Climate'
+description: 'Uploads coverage info to Code Climate'
+author: 'Caff'
+branding:
+  icon: upload-cloud
+  color: red
+inputs:
+  coverage_file_patterns:
+    required: true
+    description: 'One line per patterns to be looked for. Uses @actions/glob to parse them. End the pattern the `:<coverage-format-file>`. Defaults to `**/*.lcov:lcov`'
+    default: '**/*.lcov:lcov'
+  last_command_exit_code:
+    required: false
+    description: 'Exit code of the previous command, used only for after_build script.'
+    default: '0'
+  run_before_build:
+    required: false
+    description: 'Whether to run before_build script (`true`) or not.'
+    default: 'false'
+  collect_coverage:
+    required: false
+    description: 'Whether to run collect script (`true`) or not.'
+    default: 'true'
+  prefix:
+    required: false
+    description: 'Prefix to be uploaded to Code Climate. https://docs.codeclimate.com/docs/configuring-test-coverage#running-tests-within-a-subdirectory.'
+    default: ''
+  run_after_build:
+    required: false
+    description: 'Whether to run after_build script (`true`) or not.'
+    default: 'false'
+runs:
+  using: 'node12'
+  main: 'dist/index.js'

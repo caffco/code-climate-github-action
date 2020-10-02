@@ -1,0 +1,44 @@
+name: 'build-test'
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  build: # make sure build/ci work properly
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: |
+          yarn --frozen-lockfile
+      - run: |
+          yarn all
+  test: # make sure the action works on a clean machine without building
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install dependencies
+        run: yarn --frozen-lockfile
+      - name: before_build
+        uses: ./
+        env:
+          CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
+        with:
+          run_before_build: 'true'
+      - name: Run tests
+        run: yarn test
+      - name: Upload coverage
+        uses: ./
+        env:
+          CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
+        with:
+          collect_coverage: 'true'
+          coverage_file_patterns: |
+            coverage/lcov.info:lcov
+      - name: after_build
+        uses: ./
+        env:
+          CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
+        with:
+          run_after_build: 'true'
