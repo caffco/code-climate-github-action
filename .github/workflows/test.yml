@@ -20,12 +20,6 @@ jobs:
       - uses: actions/checkout@v2
       - name: Install dependencies
         run: yarn --frozen-lockfile
-      - name: before_build
-        uses: ./
-        env:
-          CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
-        with:
-          run_before_build: 'true'
       - name: Run tests
         run: yarn test
       - name: Upload coverage
@@ -36,9 +30,3 @@ jobs:
           collect_coverage: 'true'
           coverage_file_patterns: |
             coverage/lcov.info:lcov
-      - name: after_build
-        uses: ./
-        env:
-          CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
-        with:
-          run_after_build: 'true'
