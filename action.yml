@@ -20,7 +20,7 @@ inputs:
   collect_coverage:
     required: false
     description: 'Whether to run collect script (`true`) or not.'
-    default: 'true'
+    default: 'false'
   prefix:
     required: false
     description: 'Prefix to be uploaded to Code Climate. https://docs.codeclimate.com/docs/configuring-test-coverage#running-tests-within-a-subdirectory.'
