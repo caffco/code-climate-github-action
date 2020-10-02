@@ -1,6 +1,22 @@
 import {getInput} from '@actions/core'
 import {PatternAndType} from './codeclimate'
 
+function getPatternAndTypeFromLine(line: string): PatternAndType {
+  const parts = line.split(':')
+
+  if (parts.length < 2) {
+    return {pattern: line, type: ''}
+  }
+
+  const type = parts.slice(-1)[0]
+  const pattern = parts.slice(0, -1).join(':')
+
+  return {
+    pattern,
+    type
+  }
+}
+
 export function getOptionsFromGithubActionInput(): {
   coverageFilePatterns: PatternAndType[]
   runBeforeBuild: boolean
@@ -15,21 +31,7 @@ export function getOptionsFromGithubActionInput(): {
     .map(pattern => pattern.trim())
 
   const coverageFilePatterns = rawCoverageFilePatterns.map(
-    (file): PatternAndType => {
-      const parts = file.split(':')
-
-      if (parts.length < 2) {
-        return {pattern: file, type: ''}
-      }
-
-      const type = parts.slice(-1)[0]
-      const pattern = parts.slice(0, -1).join(':')
-
-      return {
-        pattern,
-        type
-      }
-    }
+    (line): PatternAndType => getPatternAndTypeFromLine(line)
   )
 
   const indexOfLineWithoutTypeInfo = coverageFilePatterns.findIndex(
