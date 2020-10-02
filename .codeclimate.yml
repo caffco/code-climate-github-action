@@ -2,6 +2,7 @@ version: '2'
 exclude_patterns:
   - '**/*.test.ts'
   - '**/jest.config.js'
+  - 'dist'
 
 checks:
   method-lines:
