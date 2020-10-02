@@ -1,0 +1,25 @@
+version: '2'
+exclude_patterns:
+  - '**/*.test.ts'
+  - '**/jest.config.js'
+
+checks:
+  method-lines:
+    config:
+      threshold: 30
+
+plugins:
+  scss-lint:
+    enabled: true
+  markdownlint:
+    enabled: true
+  nodesecurity:
+    enabled: true
+  fixme:
+    enabled: true
+  duplication:
+    enabled: true
+    config:
+      languages:
+        - typescript
+        - javascript
