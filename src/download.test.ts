@@ -5,6 +5,7 @@ import * as fsUtils from './fs'
 
 import {downloadCodeClimateExecutable} from './download'
 
+jest.mock('@actions/core')
 jest.mock('node-fetch')
 jest.mock('os')
 jest.mock('fs')
@@ -36,6 +37,11 @@ describe('download', () => {
     jest
       .spyOn(fs, 'chmod')
       .mockImplementation((absolutePath, fileMode, callback) => callback(null))
+    jest
+      .spyOn(fs, 'stat')
+      .mockImplementation((absolutePath, callback) =>
+        callback(null, ({size: 0} as unknown) as fs.Stats)
+      )
     jest
       .spyOn(fsUtils, 'getTemporalFileAbsolutePath')
       .mockResolvedValue('/tmp/fake-folder/fake-file')

@@ -183,6 +183,25 @@ exports.runAfterBuild = runAfterBuild;
 
 "use strict";
 
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -199,6 +218,7 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.downloadCodeClimateExecutable = void 0;
 const os_1 = __webpack_require__(2087);
 const fs_1 = __importDefault(__webpack_require__(5747));
+const core = __importStar(__webpack_require__(2186));
 const node_fetch_1 = __importDefault(__webpack_require__(467));
 const fs_2 = __webpack_require__(6078);
 function downloadCodeClimateExecutable() {
@@ -212,10 +232,13 @@ function downloadCodeClimateExecutable() {
         const response = yield node_fetch_1.default(executableUrl);
         const writeStream = fs_1.default.createWriteStream(temporalFileAbsolutePath);
         response.body.pipe(writeStream);
+        yield new Promise((resolve, reject) => fs_1.default.chmod(temporalFileAbsolutePath, 0o775, error => error ? reject(error) : resolve()));
         yield new Promise((resolve, reject) => {
             writeStream.on('close', () => resolve());
             writeStream.on('error', error => reject(error));
         });
+        const stats = yield new Promise((resolve, reject) => fs_1.default.stat(temporalFileAbsolutePath, (error, data) => error ? reject(error) : resolve(data)));
+        core.debug(`Code Climate reporter downloaded to ${temporalFileAbsolutePath}. Size ${stats.size} bytes`);
         return temporalFileAbsolutePath;
     });
 }
@@ -312,23 +335,24 @@ exports.getTemporalFileAbsolutePath = getTemporalFileAbsolutePath;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.getOptionsFromGithubActionInput = void 0;
 const core_1 = __webpack_require__(2186);
+function getPatternAndTypeFromLine(line) {
+    const parts = line.split(':');
+    if (parts.length < 2) {
+        return { pattern: line, type: '' };
+    }
+    const type = parts.slice(-1)[0];
+    const pattern = parts.slice(0, -1).join(':');
+    return {
+        pattern,
+        type
+    };
+}
 function getOptionsFromGithubActionInput() {
     const rawCoverageFilePatterns = core_1.getInput('coverage_file_patterns')
         .trim()
         .split('\n')
         .map(pattern => pattern.trim());
-    const coverageFilePatterns = rawCoverageFilePatterns.map((file) => {
-        const parts = file.split(':');
-        if (parts.length < 2) {
-            return { pattern: file, type: '' };
-        }
-        const type = parts.slice(-1)[0];
-        const pattern = parts.slice(0, -1).join(':');
-        return {
-            pattern,
-            type
-        };
-    });
+    const coverageFilePatterns = rawCoverageFilePatterns.map((line) => getPatternAndTypeFromLine(line));
     const indexOfLineWithoutTypeInfo = coverageFilePatterns.findIndex(({ type }) => !type);
     if (indexOfLineWithoutTypeInfo >= 0) {
         throw new Error(`Line ${indexOfLineWithoutTypeInfo} does not have a valid type: «${rawCoverageFilePatterns[indexOfLineWithoutTypeInfo]}». Expected to be something like «${rawCoverageFilePatterns[indexOfLineWithoutTypeInfo]}:lcov»`);

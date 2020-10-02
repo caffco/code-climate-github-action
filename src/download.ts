@@ -1,5 +1,6 @@
 import {platform} from 'os'
 import fs from 'fs'
+import * as core from '@actions/core'
 import fetch from 'node-fetch'
 import {getTemporalFileAbsolutePath} from './fs'
 
@@ -17,7 +18,7 @@ export async function downloadCodeClimateExecutable(): Promise<string> {
   const writeStream = fs.createWriteStream(temporalFileAbsolutePath)
   response.body.pipe(writeStream)
 
-  await new Promise((resolve, reject) =>
+  await new Promise<void>((resolve, reject) =>
     fs.chmod(temporalFileAbsolutePath, 0o775, error =>
       error ? reject(error) : resolve()
     )
@@ -27,6 +28,16 @@ export async function downloadCodeClimateExecutable(): Promise<string> {
     writeStream.on('close', () => resolve())
     writeStream.on('error', error => reject(error))
   })
+
+  const stats = await new Promise<fs.Stats>((resolve, reject) =>
+    fs.stat(temporalFileAbsolutePath, (error, data) =>
+      error ? reject(error) : resolve(data)
+    )
+  )
+
+  core.debug(
+    `Code Climate reporter downloaded to ${temporalFileAbsolutePath}. Size ${stats.size} bytes`
+  )
 
   return temporalFileAbsolutePath
 }
