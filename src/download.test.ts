@@ -24,8 +24,6 @@ describe('download', () => {
   } as unknown) as ReturnType<typeof fs.createWriteStream>
 
   beforeEach(() => {
-    // fetchResponseBodyPipeSpy.mockRestore();
-
     jest.spyOn(os, 'platform').mockReturnValue('linux')
     jest.spyOn(fetch, 'default').mockResolvedValue(({
       body: {
@@ -35,6 +33,9 @@ describe('download', () => {
     jest
       .spyOn(fs, 'createWriteStream')
       .mockReturnValue(createWriteStreamReturnValue)
+    jest
+      .spyOn(fs, 'chmod')
+      .mockImplementation((absolutePath, fileMode, callback) => callback(null))
     jest
       .spyOn(fsUtils, 'getTemporalFileAbsolutePath')
       .mockResolvedValue('/tmp/fake-folder/fake-file')
@@ -61,6 +62,16 @@ describe('download', () => {
       )
       expect(fetchResponseBodyPipeSpy).toHaveBeenCalledWith(
         createWriteStreamReturnValue
+      )
+    })
+
+    it('should set proper file permissions', async () => {
+      await downloadCodeClimateExecutable()
+
+      expect(fs.chmod).toHaveBeenCalledWith(
+        '/tmp/fake-folder/fake-file',
+        0o775,
+        expect.anything()
       )
     })
 

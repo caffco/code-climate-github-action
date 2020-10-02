@@ -17,6 +17,12 @@ export async function downloadCodeClimateExecutable(): Promise<string> {
   const writeStream = fs.createWriteStream(temporalFileAbsolutePath)
   response.body.pipe(writeStream)
 
+  await new Promise((resolve, reject) =>
+    fs.chmod(temporalFileAbsolutePath, 0o775, error =>
+      error ? reject(error) : resolve()
+    )
+  )
+
   await new Promise<void>((resolve, reject) => {
     writeStream.on('close', () => resolve())
     writeStream.on('error', error => reject(error))
