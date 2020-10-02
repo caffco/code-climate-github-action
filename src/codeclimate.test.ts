@@ -18,7 +18,8 @@ describe('codeclimate', () => {
     jest.spyOn(exec, 'exec').mockResolvedValue(0)
     jest.spyOn(environment, 'getEnvironment').mockReturnValue({
       GIT_BRANCH: 'the-branch',
-      GIT_COMMIT_SHA: 'the-hash'
+      GIT_COMMIT_SHA: 'the-hash',
+      CC_TEST_REPORTER_ID: 'reporter-id'
     })
     jest.spyOn(glob, 'create').mockResolvedValue(({
       glob: globSpy
@@ -40,7 +41,8 @@ describe('codeclimate', () => {
         {
           env: {
             GIT_BRANCH: 'the-branch',
-            GIT_COMMIT_SHA: 'the-hash'
+            GIT_COMMIT_SHA: 'the-hash',
+            CC_TEST_REPORTER_ID: 'reporter-id'
           }
         }
       )
@@ -344,7 +346,8 @@ describe('codeclimate', () => {
         {
           env: {
             GIT_BRANCH: 'the-branch',
-            GIT_COMMIT_SHA: 'the-hash'
+            GIT_COMMIT_SHA: 'the-hash',
+            CC_TEST_REPORTER_ID: 'reporter-id'
           }
         }
       )
@@ -379,7 +382,8 @@ describe('codeclimate', () => {
         {
           env: {
             GIT_BRANCH: 'the-branch',
-            GIT_COMMIT_SHA: 'the-hash'
+            GIT_COMMIT_SHA: 'the-hash',
+            CC_TEST_REPORTER_ID: 'reporter-id'
           }
         }
       )
@@ -423,7 +427,8 @@ describe('codeclimate', () => {
         {
           env: {
             GIT_BRANCH: 'the-branch',
-            GIT_COMMIT_SHA: 'the-hash'
+            GIT_COMMIT_SHA: 'the-hash',
+            CC_TEST_REPORTER_ID: 'reporter-id'
           }
         }
       )

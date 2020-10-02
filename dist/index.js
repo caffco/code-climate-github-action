@@ -271,7 +271,7 @@ function getEnvironmentFromPullRequest(env) {
         };
 }
 function getEnvironment(env) {
-    var _a, _b, _c, _d, _e, _f;
+    var _a, _b, _c, _d, _e, _f, _g;
     const GIT_COMMIT_SHA = (_a = env.GITHUB_SHA) !== null && _a !== void 0 ? _a : env.GIT_COMMIT_SHA;
     const gitBranchFromEnvVars = (_b = env.GITHUB_REF) !== null && _b !== void 0 ? _b : env.GIT_BRANCH;
     const GIT_BRANCH = gitBranchFromEnvVars
@@ -280,7 +280,8 @@ function getEnvironment(env) {
     const environmentFromPullRequest = getEnvironmentFromPullRequest(env);
     return {
         GIT_BRANCH: (_d = (_c = environmentFromPullRequest.GIT_BRANCH) !== null && _c !== void 0 ? _c : GIT_BRANCH) !== null && _d !== void 0 ? _d : '',
-        GIT_COMMIT_SHA: (_f = (_e = environmentFromPullRequest.GIT_COMMIT_SHA) !== null && _e !== void 0 ? _e : GIT_COMMIT_SHA) !== null && _f !== void 0 ? _f : ''
+        GIT_COMMIT_SHA: (_f = (_e = environmentFromPullRequest.GIT_COMMIT_SHA) !== null && _e !== void 0 ? _e : GIT_COMMIT_SHA) !== null && _f !== void 0 ? _f : '',
+        CC_TEST_REPORTER_ID: (_g = env.CC_TEST_REPORTER_ID) !== null && _g !== void 0 ? _g : ''
     };
 }
 exports.getEnvironment = getEnvironment;

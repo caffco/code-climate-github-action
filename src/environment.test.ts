@@ -29,7 +29,8 @@ describe('environment', () => {
         })
       ).toEqual({
         GIT_COMMIT_SHA: 'this-hash-has-maximum-priority',
-        GIT_BRANCH: 'this-branch-has-priority'
+        GIT_BRANCH: 'this-branch-has-priority',
+        CC_TEST_REPORTER_ID: ''
       })
     })
 
@@ -41,7 +42,8 @@ describe('environment', () => {
         })
       ).toEqual({
         GIT_BRANCH: '',
-        GIT_COMMIT_SHA: 'this-hash-has-priority'
+        GIT_COMMIT_SHA: 'this-hash-has-priority',
+        CC_TEST_REPORTER_ID: ''
       })
     })
 
@@ -53,7 +55,8 @@ describe('environment', () => {
         })
       ).toEqual({
         GIT_BRANCH: 'this-branch-takes-preference',
-        GIT_COMMIT_SHA: ''
+        GIT_COMMIT_SHA: '',
+        CC_TEST_REPORTER_ID: ''
       })
     })
 
@@ -64,7 +67,8 @@ describe('environment', () => {
         })
       ).toEqual({
         GIT_BRANCH: '',
-        GIT_COMMIT_SHA: 'some-hash'
+        GIT_COMMIT_SHA: 'some-hash',
+        CC_TEST_REPORTER_ID: ''
       })
     })
 
@@ -75,7 +79,20 @@ describe('environment', () => {
         })
       ).toEqual({
         GIT_BRANCH: 'my-branch-name',
-        GIT_COMMIT_SHA: ''
+        GIT_COMMIT_SHA: '',
+        CC_TEST_REPORTER_ID: ''
+      })
+    })
+
+    it('should pass CC_TEST_REPORTER_ID env var', () => {
+      expect(
+        getEnvironment({
+          CC_TEST_REPORTER_ID: 'the-reporter-id'
+        })
+      ).toEqual({
+        GIT_BRANCH: '',
+        GIT_COMMIT_SHA: '',
+        CC_TEST_REPORTER_ID: 'the-reporter-id'
       })
     })
   })

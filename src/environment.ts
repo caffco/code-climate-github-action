@@ -26,6 +26,7 @@ export function getEnvironment(
 ): {
   GIT_BRANCH: string
   GIT_COMMIT_SHA: string
+  CC_TEST_REPORTER_ID: string
 } {
   const GIT_COMMIT_SHA = env.GITHUB_SHA ?? env.GIT_COMMIT_SHA
   const gitBranchFromEnvVars = env.GITHUB_REF ?? env.GIT_BRANCH
@@ -39,6 +40,7 @@ export function getEnvironment(
   return {
     GIT_BRANCH: environmentFromPullRequest.GIT_BRANCH ?? GIT_BRANCH ?? '',
     GIT_COMMIT_SHA:
-      environmentFromPullRequest.GIT_COMMIT_SHA ?? GIT_COMMIT_SHA ?? ''
+      environmentFromPullRequest.GIT_COMMIT_SHA ?? GIT_COMMIT_SHA ?? '',
+    CC_TEST_REPORTER_ID: env.CC_TEST_REPORTER_ID ?? ''
   }
 }
