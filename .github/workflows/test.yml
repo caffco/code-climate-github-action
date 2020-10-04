@@ -17,9 +17,21 @@ jobs:
   test: # make sure the action works on a clean machine without building
     runs-on: ubuntu-latest
     steps:
+      - name: Install git
+        run: |
+          apt-get update 
+          apt-get install -y git
       - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
       - name: Install dependencies
         run: yarn --frozen-lockfile
+      - name: before_build
+        uses: ./
+        env:
+          CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
+        with:
+          run_before_build: 'true'
       - name: Run tests
         run: yarn test
       - name: Upload coverage
@@ -30,3 +42,9 @@ jobs:
           collect_coverage: 'true'
           coverage_file_patterns: |
             coverage/lcov.info:lcov
+      - name: after_build
+        uses: ./
+        env:
+          CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
+        with:
+          run_after_build: 'true'
