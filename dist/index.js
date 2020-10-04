@@ -98,8 +98,7 @@ function formatCoverageOfType({ codeClimateExecutable, patternAndType, patternNu
         }));
         for (const command of formatCoverageCommands) {
             const exitCode = yield exec_1.exec(codeClimateExecutable, command.parameters, {
-                cwd: repositoryRootPath,
-                env: environment_1.getEnvironment(process.env)
+                cwd: repositoryRootPath
             });
             if (exitCode !== 0) {
                 throw new Error(`Could not format coverage file at «${command.parameters[1]}». ${getReadableParameters(command.parameters)}`);
@@ -120,8 +119,7 @@ function sumCoverages({ codeClimateExecutable, absolutePathsToFormattedCoverageF
             absolutePathToTotalCoverage
         ];
         const exitCode = yield exec_1.exec(codeClimateExecutable, commandParameters, {
-            cwd: repositoryRootPath,
-            env: environment_1.getEnvironment(process.env)
+            cwd: repositoryRootPath
         });
         if (exitCode !== 0) {
             throw new Error(`Could not sum coverages. ${getReadableParameters(commandParameters)}`);

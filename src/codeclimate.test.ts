@@ -95,12 +95,7 @@ describe('codeclimate', () => {
           '/fake-output-path/codeclimate.0.0.json'
         ],
         {
-          cwd: '/fake-path/repository',
-          env: {
-            CC_TEST_REPORTER_ID: 'reporter-id',
-            GIT_BRANCH: 'the-branch',
-            GIT_COMMIT_SHA: 'the-hash'
-          }
+          cwd: '/fake-path/repository'
         }
       )
       expect(exec.exec).toHaveBeenCalledWith(
@@ -114,12 +109,7 @@ describe('codeclimate', () => {
           '/fake-output-path/codeclimate.0.1.json'
         ],
         {
-          cwd: '/fake-path/repository',
-          env: {
-            CC_TEST_REPORTER_ID: 'reporter-id',
-            GIT_BRANCH: 'the-branch',
-            GIT_COMMIT_SHA: 'the-hash'
-          }
+          cwd: '/fake-path/repository'
         }
       )
       expect(exec.exec).toHaveBeenCalledWith(
@@ -133,12 +123,7 @@ describe('codeclimate', () => {
           '/fake-output-path/codeclimate.1.0.json'
         ],
         {
-          cwd: '/fake-path/repository',
-          env: {
-            CC_TEST_REPORTER_ID: 'reporter-id',
-            GIT_BRANCH: 'the-branch',
-            GIT_COMMIT_SHA: 'the-hash'
-          }
+          cwd: '/fake-path/repository'
         }
       )
       expect(exec.exec).toHaveBeenCalledWith(
@@ -152,12 +137,7 @@ describe('codeclimate', () => {
           '/fake-output-path/codeclimate.1.1.json'
         ],
         {
-          cwd: '/fake-path/repository',
-          env: {
-            CC_TEST_REPORTER_ID: 'reporter-id',
-            GIT_BRANCH: 'the-branch',
-            GIT_COMMIT_SHA: 'the-hash'
-          }
+          cwd: '/fake-path/repository'
         }
       )
     })
@@ -224,12 +204,7 @@ describe('codeclimate', () => {
           'my-prefix'
         ],
         {
-          cwd: '/fake-path/repository',
-          env: {
-            CC_TEST_REPORTER_ID: 'reporter-id',
-            GIT_BRANCH: 'the-branch',
-            GIT_COMMIT_SHA: 'the-hash'
-          }
+          cwd: '/fake-path/repository'
         }
       )
       expect(exec.exec).not.toHaveBeenCalledWith(
@@ -284,12 +259,7 @@ describe('codeclimate', () => {
           '--debug'
         ],
         {
-          cwd: '/fake-path/repository',
-          env: {
-            CC_TEST_REPORTER_ID: 'reporter-id',
-            GIT_BRANCH: 'the-branch',
-            GIT_COMMIT_SHA: 'the-hash'
-          }
+          cwd: '/fake-path/repository'
         }
       )
       expect(exec.exec).not.toHaveBeenCalledWith(
@@ -398,12 +368,7 @@ describe('codeclimate', () => {
           '/fake-output-path/codeclimate.total.json'
         ],
         {
-          cwd: '/fake-path/repository',
-          env: {
-            CC_TEST_REPORTER_ID: 'reporter-id',
-            GIT_BRANCH: 'the-branch',
-            GIT_COMMIT_SHA: 'the-hash'
-          }
+          cwd: '/fake-path/repository'
         }
       )
     })

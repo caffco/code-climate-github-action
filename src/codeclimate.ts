@@ -112,8 +112,7 @@ async function formatCoverageOfType({
 
   for (const command of formatCoverageCommands) {
     const exitCode = await exec(codeClimateExecutable, command.parameters, {
-      cwd: repositoryRootPath,
-      env: getEnvironment(process.env)
+      cwd: repositoryRootPath
     })
 
     if (exitCode !== 0) {
@@ -156,8 +155,7 @@ async function sumCoverages({
   ]
 
   const exitCode = await exec(codeClimateExecutable, commandParameters, {
-    cwd: repositoryRootPath,
-    env: getEnvironment(process.env)
+    cwd: repositoryRootPath
   })
 
   if (exitCode !== 0) {
