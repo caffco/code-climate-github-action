@@ -42,10 +42,11 @@ const glob = __importStar(__webpack_require__(8090));
 const exec_1 = __webpack_require__(1514);
 const path_1 = __webpack_require__(5622);
 const environment_1 = __webpack_require__(3309);
-function runBeforeBuild(codeClimateExecutable) {
+function runBeforeBuild({ repositoryRootPath, codeClimateExecutable }) {
     return __awaiter(this, void 0, void 0, function* () {
         const exitCode = yield exec_1.exec(codeClimateExecutable, ['before-build'], {
-            env: environment_1.getEnvironment(process.env)
+            env: environment_1.getEnvironment(process.env),
+            cwd: repositoryRootPath
         });
         if (exitCode !== 0) {
             throw new Error('before-build command failed');
@@ -78,7 +79,7 @@ function getReadableParameters(parameters) {
     const readableParameters = parameters.map(param => `«${param}»`).join(', ');
     return `Parameters: [ ${readableParameters} ]`;
 }
-function formatCoverageOfType({ codeClimateExecutable, patternAndType, patternNumber, prefix, absolutePathToOutputFolder }) {
+function formatCoverageOfType({ codeClimateExecutable, patternAndType, patternNumber, prefix, absolutePathToOutputFolder, repositoryRootPath }) {
     return __awaiter(this, void 0, void 0, function* () {
         const { pattern, type } = patternAndType;
         const globber = yield glob.create(pattern);
@@ -96,7 +97,10 @@ function formatCoverageOfType({ codeClimateExecutable, patternAndType, patternNu
             absolutePathToOutputFolder
         }));
         for (const command of formatCoverageCommands) {
-            const exitCode = yield exec_1.exec(codeClimateExecutable, command.parameters);
+            const exitCode = yield exec_1.exec(codeClimateExecutable, command.parameters, {
+                cwd: repositoryRootPath,
+                env: environment_1.getEnvironment(process.env)
+            });
             if (exitCode !== 0) {
                 throw new Error(`Could not format coverage file at «${command.parameters[1]}». ${getReadableParameters(command.parameters)}`);
             }
@@ -104,7 +108,7 @@ function formatCoverageOfType({ codeClimateExecutable, patternAndType, patternNu
         return formatCoverageCommands.map(({ absolutePathToFormattedCoverage }) => absolutePathToFormattedCoverage);
     });
 }
-function sumCoverages({ codeClimateExecutable, absolutePathsToFormattedCoverageFiles, absolutePathToOutputFolder }) {
+function sumCoverages({ codeClimateExecutable, absolutePathsToFormattedCoverageFiles, absolutePathToOutputFolder, repositoryRootPath }) {
     return __awaiter(this, void 0, void 0, function* () {
         const absolutePathToTotalCoverage = path_1.resolve(absolutePathToOutputFolder, 'codeclimate.total.json');
         const commandParameters = [
@@ -115,20 +119,24 @@ function sumCoverages({ codeClimateExecutable, absolutePathsToFormattedCoverageF
             '-o',
             absolutePathToTotalCoverage
         ];
-        const exitCode = yield exec_1.exec(codeClimateExecutable, commandParameters);
+        const exitCode = yield exec_1.exec(codeClimateExecutable, commandParameters, {
+            cwd: repositoryRootPath,
+            env: environment_1.getEnvironment(process.env)
+        });
         if (exitCode !== 0) {
             throw new Error(`Could not sum coverages. ${getReadableParameters(commandParameters)}`);
         }
         return absolutePathToTotalCoverage;
     });
 }
-function uploadCoverage({ codeClimateExecutable, absolutePathToCoverageFile }) {
+function uploadCoverage({ codeClimateExecutable, absolutePathToCoverageFile, repositoryRootPath }) {
     return __awaiter(this, void 0, void 0, function* () {
         const baseParameters = ['upload-coverage', '-i', absolutePathToCoverageFile];
         const commandParameters = core.isDebug()
             ? [...baseParameters, '--debug']
             : baseParameters;
         const exitCode = yield exec_1.exec(codeClimateExecutable, commandParameters, {
+            cwd: repositoryRootPath,
             env: environment_1.getEnvironment(process.env)
         });
         if (exitCode !== 0) {
@@ -136,7 +144,7 @@ function uploadCoverage({ codeClimateExecutable, absolutePathToCoverageFile }) {
         }
     });
 }
-function collectCoverage({ codeClimateExecutable, coverageFilePatternsAndTypes, prefix, absolutePathToOutputFolder }) {
+function collectCoverage({ codeClimateExecutable, coverageFilePatternsAndTypes, prefix, absolutePathToOutputFolder, repositoryRootPath }) {
     return __awaiter(this, void 0, void 0, function* () {
         const absolutePathToFormattedCoverageFilesByPattern = yield Promise.all(coverageFilePatternsAndTypes.map((patternAndType, patternNumber) => __awaiter(this, void 0, void 0, function* () {
             return formatCoverageOfType({
@@ -144,7 +152,8 @@ function collectCoverage({ codeClimateExecutable, coverageFilePatternsAndTypes, 
                 patternAndType,
                 patternNumber,
                 prefix,
-                absolutePathToOutputFolder
+                absolutePathToOutputFolder,
+                repositoryRootPath
             });
         })));
         const absolutePathsToFormattedCoverageFiles = [].concat(...absolutePathToFormattedCoverageFilesByPattern);
@@ -154,18 +163,21 @@ function collectCoverage({ codeClimateExecutable, coverageFilePatternsAndTypes, 
         const absolutePathToTotalCoverage = yield sumCoverages({
             codeClimateExecutable,
             absolutePathsToFormattedCoverageFiles,
-            absolutePathToOutputFolder
+            absolutePathToOutputFolder,
+            repositoryRootPath
         });
         yield uploadCoverage({
             codeClimateExecutable,
-            absolutePathToCoverageFile: absolutePathToTotalCoverage
+            absolutePathToCoverageFile: absolutePathToTotalCoverage,
+            repositoryRootPath
         });
     });
 }
 exports.collectCoverage = collectCoverage;
-function runAfterBuild({ codeClimateExecutable, lastCommandExitCode }) {
+function runAfterBuild({ codeClimateExecutable, lastCommandExitCode, repositoryRootPath }) {
     return __awaiter(this, void 0, void 0, function* () {
         const exitCode = yield exec_1.exec(codeClimateExecutable, ['after-build', '--exit-code', `${lastCommandExitCode}`], {
+            cwd: repositoryRootPath,
             env: environment_1.getEnvironment(process.env)
         });
         if (exitCode !== 0) {
@@ -364,6 +376,7 @@ function getOptionsFromGithubActionInput() {
         : 0;
     return {
         coverageFilePatterns,
+        repositoryRootPath: core_1.getInput('repository_root_path'),
         runBeforeBuild: core_1.getInput('run_before_build') === 'true',
         collectCoverage: core_1.getInput('collect_coverage') === 'true',
         runAfterBuild: core_1.getInput('run_after_build') === 'true',
@@ -458,20 +471,25 @@ function main() {
         const options = github_1.getOptionsFromGithubActionInput();
         const codeClimateExecutable = yield download_1.downloadCodeClimateExecutable();
         if (options.runBeforeBuild) {
-            yield codeclimate_1.runBeforeBuild(codeClimateExecutable);
+            yield codeclimate_1.runBeforeBuild({
+                codeClimateExecutable,
+                repositoryRootPath: options.repositoryRootPath
+            });
         }
         if (options.collectCoverage) {
             yield codeclimate_1.collectCoverage({
                 codeClimateExecutable,
                 coverageFilePatternsAndTypes: options.coverageFilePatterns,
                 prefix: options.prefix,
-                absolutePathToOutputFolder: path_1.dirname(codeClimateExecutable)
+                absolutePathToOutputFolder: path_1.dirname(codeClimateExecutable),
+                repositoryRootPath: options.repositoryRootPath
             });
         }
         if (options.runAfterBuild) {
             yield codeclimate_1.runAfterBuild({
                 codeClimateExecutable,
-                lastCommandExitCode: options.lastCommandExitCode
+                lastCommandExitCode: options.lastCommandExitCode,
+                repositoryRootPath: options.repositoryRootPath
             });
         }
     });

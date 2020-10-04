@@ -5,11 +5,16 @@ import {resolve as resolvePath} from 'path'
 
 import {getEnvironment} from './environment'
 
-export async function runBeforeBuild(
+export async function runBeforeBuild({
+  repositoryRootPath,
+  codeClimateExecutable
+}: {
+  repositoryRootPath: string
   codeClimateExecutable: string
-): Promise<void> {
+}): Promise<void> {
   const exitCode = await exec(codeClimateExecutable, ['before-build'], {
-    env: getEnvironment(process.env)
+    env: getEnvironment(process.env),
+    cwd: repositoryRootPath
   })
 
   if (exitCode !== 0) {
@@ -74,13 +79,15 @@ async function formatCoverageOfType({
   patternAndType,
   patternNumber,
   prefix,
-  absolutePathToOutputFolder
+  absolutePathToOutputFolder,
+  repositoryRootPath
 }: {
   codeClimateExecutable: string
   patternAndType: PatternAndType
   patternNumber: number
   prefix?: string
   absolutePathToOutputFolder: string
+  repositoryRootPath: string
 }): Promise<string[]> {
   const {pattern, type} = patternAndType
   const globber = await glob.create(pattern)
@@ -104,7 +111,10 @@ async function formatCoverageOfType({
   )
 
   for (const command of formatCoverageCommands) {
-    const exitCode = await exec(codeClimateExecutable, command.parameters)
+    const exitCode = await exec(codeClimateExecutable, command.parameters, {
+      cwd: repositoryRootPath,
+      env: getEnvironment(process.env)
+    })
 
     if (exitCode !== 0) {
       throw new Error(
@@ -123,11 +133,13 @@ async function formatCoverageOfType({
 async function sumCoverages({
   codeClimateExecutable,
   absolutePathsToFormattedCoverageFiles,
-  absolutePathToOutputFolder
+  absolutePathToOutputFolder,
+  repositoryRootPath
 }: {
   codeClimateExecutable: string
   absolutePathsToFormattedCoverageFiles: string[]
   absolutePathToOutputFolder: string
+  repositoryRootPath: string
 }): Promise<string> {
   const absolutePathToTotalCoverage = resolvePath(
     absolutePathToOutputFolder,
@@ -143,7 +155,10 @@ async function sumCoverages({
     absolutePathToTotalCoverage
   ]
 
-  const exitCode = await exec(codeClimateExecutable, commandParameters)
+  const exitCode = await exec(codeClimateExecutable, commandParameters, {
+    cwd: repositoryRootPath,
+    env: getEnvironment(process.env)
+  })
 
   if (exitCode !== 0) {
     throw new Error(
@@ -156,10 +171,12 @@ async function sumCoverages({
 
 async function uploadCoverage({
   codeClimateExecutable,
-  absolutePathToCoverageFile
+  absolutePathToCoverageFile,
+  repositoryRootPath
 }: {
   codeClimateExecutable: string
   absolutePathToCoverageFile: string
+  repositoryRootPath: string
 }): Promise<void> {
   const baseParameters = ['upload-coverage', '-i', absolutePathToCoverageFile]
 
@@ -168,6 +185,7 @@ async function uploadCoverage({
     : baseParameters
 
   const exitCode = await exec(codeClimateExecutable, commandParameters, {
+    cwd: repositoryRootPath,
     env: getEnvironment(process.env)
   })
 
@@ -182,12 +200,14 @@ export async function collectCoverage({
   codeClimateExecutable,
   coverageFilePatternsAndTypes,
   prefix,
-  absolutePathToOutputFolder
+  absolutePathToOutputFolder,
+  repositoryRootPath
 }: {
   codeClimateExecutable: string
   coverageFilePatternsAndTypes: PatternAndType[]
   prefix?: string
   absolutePathToOutputFolder: string
+  repositoryRootPath: string
 }): Promise<void> {
   const absolutePathToFormattedCoverageFilesByPattern = await Promise.all(
     coverageFilePatternsAndTypes.map(async (patternAndType, patternNumber) =>
@@ -196,7 +216,8 @@ export async function collectCoverage({
         patternAndType,
         patternNumber,
         prefix,
-        absolutePathToOutputFolder
+        absolutePathToOutputFolder,
+        repositoryRootPath
       })
     )
   )
@@ -212,26 +233,31 @@ export async function collectCoverage({
   const absolutePathToTotalCoverage = await sumCoverages({
     codeClimateExecutable,
     absolutePathsToFormattedCoverageFiles,
-    absolutePathToOutputFolder
+    absolutePathToOutputFolder,
+    repositoryRootPath
   })
 
   await uploadCoverage({
     codeClimateExecutable,
-    absolutePathToCoverageFile: absolutePathToTotalCoverage
+    absolutePathToCoverageFile: absolutePathToTotalCoverage,
+    repositoryRootPath
   })
 }
 
 export async function runAfterBuild({
   codeClimateExecutable,
-  lastCommandExitCode
+  lastCommandExitCode,
+  repositoryRootPath
 }: {
   codeClimateExecutable: string
   lastCommandExitCode: number
+  repositoryRootPath: string
 }): Promise<void> {
   const exitCode = await exec(
     codeClimateExecutable,
     ['after-build', '--exit-code', `${lastCommandExitCode}`],
     {
+      cwd: repositoryRootPath,
       env: getEnvironment(process.env)
     }
   )

@@ -9,7 +9,10 @@ export default async function main(): Promise<void> {
   const codeClimateExecutable = await downloadCodeClimateExecutable()
 
   if (options.runBeforeBuild) {
-    await runBeforeBuild(codeClimateExecutable)
+    await runBeforeBuild({
+      codeClimateExecutable,
+      repositoryRootPath: options.repositoryRootPath
+    })
   }
 
   if (options.collectCoverage) {
@@ -17,14 +20,16 @@ export default async function main(): Promise<void> {
       codeClimateExecutable,
       coverageFilePatternsAndTypes: options.coverageFilePatterns,
       prefix: options.prefix,
-      absolutePathToOutputFolder: dirname(codeClimateExecutable)
+      absolutePathToOutputFolder: dirname(codeClimateExecutable),
+      repositoryRootPath: options.repositoryRootPath
     })
   }
 
   if (options.runAfterBuild) {
     await runAfterBuild({
       codeClimateExecutable,
-      lastCommandExitCode: options.lastCommandExitCode
+      lastCommandExitCode: options.lastCommandExitCode,
+      repositoryRootPath: options.repositoryRootPath
     })
   }
 }

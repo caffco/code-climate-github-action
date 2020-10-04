@@ -191,5 +191,53 @@ describe('Github', () => {
         )
       })
     })
+
+    describe('`prefix`', () => {
+      it('should parse `prefix`', async () => {
+        jest.spyOn(core, 'getInput').mockImplementation(
+          key =>
+            (({
+              coverage_file_patterns: 'fake-pattern-one:lcov',
+              prefix: 'the-prefix'
+            } as Record<string, string>)[key])
+        )
+
+        expect(getOptionsFromGithubActionInput()).toHaveProperty(
+          'prefix',
+          'the-prefix'
+        )
+      })
+
+      it('should allow being undefined', async () => {
+        jest.spyOn(core, 'getInput').mockImplementation(
+          key =>
+            (({
+              coverage_file_patterns: 'fake-pattern-one:lcov'
+            } as Record<string, string>)[key])
+        )
+
+        expect(getOptionsFromGithubActionInput()).toHaveProperty(
+          'prefix',
+          undefined
+        )
+      })
+    })
+
+    describe('`repositoryRootPath`', () => {
+      it('should parse `repository_root_path`', async () => {
+        jest.spyOn(core, 'getInput').mockImplementation(
+          key =>
+            (({
+              coverage_file_patterns: 'fake-pattern-one:lcov',
+              repository_root_path: 'the-path'
+            } as Record<string, string>)[key])
+        )
+
+        expect(getOptionsFromGithubActionInput()).toHaveProperty(
+          'repositoryRootPath',
+          'the-path'
+        )
+      })
+    })
   })
 })

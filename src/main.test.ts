@@ -13,7 +13,8 @@ describe('main', () => {
     collectCoverage: false,
     runAfterBuild: false,
     lastCommandExitCode: 0,
-    coverageFilePatterns: []
+    coverageFilePatterns: [],
+    repositoryRootPath: '/fake-path/repository'
   }
 
   beforeEach(() => {
@@ -43,9 +44,10 @@ describe('main', () => {
 
     await main()
 
-    expect(codeclimate.runBeforeBuild).toHaveBeenCalledWith(
-      '/fake-path/code-climate'
-    )
+    expect(codeclimate.runBeforeBuild).toHaveBeenCalledWith({
+      codeClimateExecutable: '/fake-path/code-climate',
+      repositoryRootPath: '/fake-path/repository'
+    })
   })
 
   it('should skip running before build when not asked for', async () => {
@@ -82,7 +84,8 @@ describe('main', () => {
         }
       ],
       prefix: undefined,
-      absolutePathToOutputFolder: '/fake-path'
+      absolutePathToOutputFolder: '/fake-path',
+      repositoryRootPath: '/fake-path/repository'
     })
   })
 
@@ -107,7 +110,8 @@ describe('main', () => {
 
     expect(codeclimate.runAfterBuild).toHaveBeenCalledWith({
       codeClimateExecutable: '/fake-path/code-climate',
-      lastCommandExitCode: 0
+      lastCommandExitCode: 0,
+      repositoryRootPath: '/fake-path/repository'
     })
   })
 

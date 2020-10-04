@@ -19,6 +19,7 @@ function getPatternAndTypeFromLine(line: string): PatternAndType {
 
 export function getOptionsFromGithubActionInput(): {
   coverageFilePatterns: PatternAndType[]
+  repositoryRootPath: string
   runBeforeBuild: boolean
   collectCoverage: boolean
   runAfterBuild: boolean
@@ -51,6 +52,7 @@ export function getOptionsFromGithubActionInput(): {
 
   return {
     coverageFilePatterns,
+    repositoryRootPath: getInput('repository_root_path'),
     runBeforeBuild: getInput('run_before_build') === 'true',
     collectCoverage: getInput('collect_coverage') === 'true',
     runAfterBuild: getInput('run_after_build') === 'true',

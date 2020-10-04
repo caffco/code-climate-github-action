@@ -5,6 +5,10 @@ branding:
   icon: upload-cloud
   color: red
 inputs:
+  repository_root_path:
+    required: true
+    description: 'Absolute path to repository. Defaults to `.`.'
+    default: '.'
   coverage_file_patterns:
     required: true
     description: 'One line per patterns to be looked for. Uses @actions/glob to parse them. End the pattern the `:<coverage-format-file>`. Defaults to `**/*.lcov:lcov`'

@@ -33,12 +33,16 @@ describe('codeclimate', () => {
 
   describe('#runBeforeBuild', () => {
     it('should run proper command', async () => {
-      await runBeforeBuild('code-climate-executable-path')
+      await runBeforeBuild({
+        codeClimateExecutable: 'code-climate-executable-path',
+        repositoryRootPath: '/fake-path/repository'
+      })
 
       expect(exec.exec).toHaveBeenCalledWith(
         'code-climate-executable-path',
         ['before-build'],
         {
+          cwd: '/fake-path/repository',
           env: {
             GIT_BRANCH: 'the-branch',
             GIT_COMMIT_SHA: 'the-hash',
@@ -52,7 +56,10 @@ describe('codeclimate', () => {
       jest.spyOn(exec, 'exec').mockResolvedValue(1)
 
       await expect(
-        runBeforeBuild('code-climate-executable-path')
+        runBeforeBuild({
+          codeClimateExecutable: 'code-climate-executable-path',
+          repositoryRootPath: '/fake-path/repository'
+        })
       ).rejects.toThrow('before-build command failed')
     })
   })
@@ -60,6 +67,7 @@ describe('codeclimate', () => {
   describe('#collectCoverage', () => {
     it('should format files matching pattern', async () => {
       await collectCoverage({
+        repositoryRootPath: '/fake-path/repository',
         codeClimateExecutable: 'code-climate-executable-path',
         absolutePathToOutputFolder: '/fake-output-path',
         coverageFilePatternsAndTypes: [
@@ -76,38 +84,82 @@ describe('codeclimate', () => {
 
       expect(glob.create).toHaveBeenCalledWith('*.lcov')
       expect(glob.create).toHaveBeenCalledWith('*.junit')
-      expect(exec.exec).toHaveBeenCalledWith('code-climate-executable-path', [
-        'format-coverage',
-        '/fake-path/file-a',
-        '-t',
-        'lcov',
-        '-o',
-        '/fake-output-path/codeclimate.0.0.json'
-      ])
-      expect(exec.exec).toHaveBeenCalledWith('code-climate-executable-path', [
-        'format-coverage',
-        '/fake-path/file-b',
-        '-t',
-        'lcov',
-        '-o',
-        '/fake-output-path/codeclimate.0.1.json'
-      ])
-      expect(exec.exec).toHaveBeenCalledWith('code-climate-executable-path', [
-        'format-coverage',
-        '/fake-path/file-a',
-        '-t',
-        'junit',
-        '-o',
-        '/fake-output-path/codeclimate.1.0.json'
-      ])
-      expect(exec.exec).toHaveBeenCalledWith('code-climate-executable-path', [
-        'format-coverage',
-        '/fake-path/file-b',
-        '-t',
-        'junit',
-        '-o',
-        '/fake-output-path/codeclimate.1.1.json'
-      ])
+      expect(exec.exec).toHaveBeenCalledWith(
+        'code-climate-executable-path',
+        [
+          'format-coverage',
+          '/fake-path/file-a',
+          '-t',
+          'lcov',
+          '-o',
+          '/fake-output-path/codeclimate.0.0.json'
+        ],
+        {
+          cwd: '/fake-path/repository',
+          env: {
+            CC_TEST_REPORTER_ID: 'reporter-id',
+            GIT_BRANCH: 'the-branch',
+            GIT_COMMIT_SHA: 'the-hash'
+          }
+        }
+      )
+      expect(exec.exec).toHaveBeenCalledWith(
+        'code-climate-executable-path',
+        [
+          'format-coverage',
+          '/fake-path/file-b',
+          '-t',
+          'lcov',
+          '-o',
+          '/fake-output-path/codeclimate.0.1.json'
+        ],
+        {
+          cwd: '/fake-path/repository',
+          env: {
+            CC_TEST_REPORTER_ID: 'reporter-id',
+            GIT_BRANCH: 'the-branch',
+            GIT_COMMIT_SHA: 'the-hash'
+          }
+        }
+      )
+      expect(exec.exec).toHaveBeenCalledWith(
+        'code-climate-executable-path',
+        [
+          'format-coverage',
+          '/fake-path/file-a',
+          '-t',
+          'junit',
+          '-o',
+          '/fake-output-path/codeclimate.1.0.json'
+        ],
+        {
+          cwd: '/fake-path/repository',
+          env: {
+            CC_TEST_REPORTER_ID: 'reporter-id',
+            GIT_BRANCH: 'the-branch',
+            GIT_COMMIT_SHA: 'the-hash'
+          }
+        }
+      )
+      expect(exec.exec).toHaveBeenCalledWith(
+        'code-climate-executable-path',
+        [
+          'format-coverage',
+          '/fake-path/file-b',
+          '-t',
+          'junit',
+          '-o',
+          '/fake-output-path/codeclimate.1.1.json'
+        ],
+        {
+          cwd: '/fake-path/repository',
+          env: {
+            CC_TEST_REPORTER_ID: 'reporter-id',
+            GIT_BRANCH: 'the-branch',
+            GIT_COMMIT_SHA: 'the-hash'
+          }
+        }
+      )
     })
 
     it('should ignore patterns without matches', async () => {
@@ -116,6 +168,7 @@ describe('codeclimate', () => {
         .mockResolvedValueOnce(['/fake-path/file-a'])
 
       await collectCoverage({
+        repositoryRootPath: '/fake-path/repository',
         codeClimateExecutable: 'code-climate-executable-path',
         absolutePathToOutputFolder: '/fake-output-path',
         coverageFilePatternsAndTypes: [
@@ -142,6 +195,7 @@ describe('codeclimate', () => {
 
     it('should respect prefix', async () => {
       await collectCoverage({
+        repositoryRootPath: '/fake-path/repository',
         codeClimateExecutable: 'code-climate-executable-path',
         absolutePathToOutputFolder: '/fake-output-path',
         coverageFilePatternsAndTypes: [
@@ -157,16 +211,27 @@ describe('codeclimate', () => {
         prefix: 'my-prefix'
       })
 
-      expect(exec.exec).toHaveBeenCalledWith('code-climate-executable-path', [
-        'format-coverage',
-        expect.anything(),
-        '-t',
-        expect.anything(),
-        '-o',
-        expect.anything(),
-        '--prefix',
-        'my-prefix'
-      ])
+      expect(exec.exec).toHaveBeenCalledWith(
+        'code-climate-executable-path',
+        [
+          'format-coverage',
+          expect.anything(),
+          '-t',
+          expect.anything(),
+          '-o',
+          expect.anything(),
+          '--prefix',
+          'my-prefix'
+        ],
+        {
+          cwd: '/fake-path/repository',
+          env: {
+            CC_TEST_REPORTER_ID: 'reporter-id',
+            GIT_BRANCH: 'the-branch',
+            GIT_COMMIT_SHA: 'the-hash'
+          }
+        }
+      )
       expect(exec.exec).not.toHaveBeenCalledWith(
         'code-climate-executable-path',
         [
@@ -176,7 +241,15 @@ describe('codeclimate', () => {
           expect.anything(),
           '-o',
           expect.anything()
-        ]
+        ],
+        {
+          cwd: '/fake-path/repository',
+          env: {
+            CC_TEST_REPORTER_ID: 'reporter-id',
+            GIT_BRANCH: 'the-branch',
+            GIT_COMMIT_SHA: 'the-hash'
+          }
+        }
       )
     })
 
@@ -184,6 +257,7 @@ describe('codeclimate', () => {
       jest.spyOn(core, 'isDebug').mockReturnValue(true)
 
       await collectCoverage({
+        repositoryRootPath: '/fake-path/repository',
         codeClimateExecutable: 'code-climate-executable-path',
         absolutePathToOutputFolder: '/fake-output-path',
         coverageFilePatternsAndTypes: [
@@ -198,15 +272,26 @@ describe('codeclimate', () => {
         ]
       })
 
-      expect(exec.exec).toHaveBeenCalledWith('code-climate-executable-path', [
-        'format-coverage',
-        expect.anything(),
-        '-t',
-        expect.anything(),
-        '-o',
-        expect.anything(),
-        '--debug'
-      ])
+      expect(exec.exec).toHaveBeenCalledWith(
+        'code-climate-executable-path',
+        [
+          'format-coverage',
+          expect.anything(),
+          '-t',
+          expect.anything(),
+          '-o',
+          expect.anything(),
+          '--debug'
+        ],
+        {
+          cwd: '/fake-path/repository',
+          env: {
+            CC_TEST_REPORTER_ID: 'reporter-id',
+            GIT_BRANCH: 'the-branch',
+            GIT_COMMIT_SHA: 'the-hash'
+          }
+        }
+      )
       expect(exec.exec).not.toHaveBeenCalledWith(
         'code-climate-executable-path',
         [
@@ -216,7 +301,15 @@ describe('codeclimate', () => {
           expect.anything(),
           '-o',
           expect.anything()
-        ]
+        ],
+        {
+          cwd: '/fake-path/repository',
+          env: {
+            CC_TEST_REPORTER_ID: 'reporter-id',
+            GIT_BRANCH: 'the-branch',
+            GIT_COMMIT_SHA: 'the-hash'
+          }
+        }
       )
     })
 
@@ -225,6 +318,7 @@ describe('codeclimate', () => {
 
       await expect(
         collectCoverage({
+          repositoryRootPath: '/fake-path/repository',
           codeClimateExecutable: 'code-climate-executable-path',
           absolutePathToOutputFolder: '/fake-output-path',
           coverageFilePatternsAndTypes: [
@@ -248,6 +342,7 @@ describe('codeclimate', () => {
 
       await expect(
         collectCoverage({
+          repositoryRootPath: '/fake-path/repository',
           codeClimateExecutable: 'code-climate-executable-path',
           absolutePathToOutputFolder: '/fake-output-path',
           coverageFilePatternsAndTypes: [
@@ -274,6 +369,7 @@ describe('codeclimate', () => {
 
     it('should create total coverage file', async () => {
       await collectCoverage({
+        repositoryRootPath: '/fake-path/repository',
         codeClimateExecutable: 'code-climate-executable-path',
         absolutePathToOutputFolder: '/fake-output-path',
         coverageFilePatternsAndTypes: [
@@ -288,17 +384,28 @@ describe('codeclimate', () => {
         ]
       })
 
-      expect(exec.exec).toHaveBeenCalledWith('code-climate-executable-path', [
-        'sum-coverage',
-        '/fake-output-path/codeclimate.0.0.json',
-        '/fake-output-path/codeclimate.0.1.json',
-        '/fake-output-path/codeclimate.1.0.json',
-        '/fake-output-path/codeclimate.1.1.json',
-        '-p',
-        '4',
-        '-o',
-        '/fake-output-path/codeclimate.total.json'
-      ])
+      expect(exec.exec).toHaveBeenCalledWith(
+        'code-climate-executable-path',
+        [
+          'sum-coverage',
+          '/fake-output-path/codeclimate.0.0.json',
+          '/fake-output-path/codeclimate.0.1.json',
+          '/fake-output-path/codeclimate.1.0.json',
+          '/fake-output-path/codeclimate.1.1.json',
+          '-p',
+          '4',
+          '-o',
+          '/fake-output-path/codeclimate.total.json'
+        ],
+        {
+          cwd: '/fake-path/repository',
+          env: {
+            CC_TEST_REPORTER_ID: 'reporter-id',
+            GIT_BRANCH: 'the-branch',
+            GIT_COMMIT_SHA: 'the-hash'
+          }
+        }
+      )
     })
 
     it('should fail is joining files fail', async () => {
@@ -310,6 +417,7 @@ describe('codeclimate', () => {
 
       await expect(
         collectCoverage({
+          repositoryRootPath: '/fake-path/repository',
           codeClimateExecutable: 'code-climate-executable-path',
           absolutePathToOutputFolder: '/fake-output-path',
           coverageFilePatternsAndTypes: [
@@ -326,6 +434,7 @@ describe('codeclimate', () => {
 
     it('should upload total coverage file', async () => {
       await collectCoverage({
+        repositoryRootPath: '/fake-path/repository',
         codeClimateExecutable: 'code-climate-executable-path',
         absolutePathToOutputFolder: '/fake-output-path',
         coverageFilePatternsAndTypes: [
@@ -344,6 +453,7 @@ describe('codeclimate', () => {
         'code-climate-executable-path',
         ['upload-coverage', '-i', '/fake-output-path/codeclimate.total.json'],
         {
+          cwd: '/fake-path/repository',
           env: {
             GIT_BRANCH: 'the-branch',
             GIT_COMMIT_SHA: 'the-hash',
@@ -357,6 +467,7 @@ describe('codeclimate', () => {
       jest.spyOn(core, 'isDebug').mockReturnValue(true)
 
       await collectCoverage({
+        repositoryRootPath: '/fake-path/repository',
         codeClimateExecutable: 'code-climate-executable-path',
         absolutePathToOutputFolder: '/fake-output-path',
         coverageFilePatternsAndTypes: [
@@ -380,6 +491,7 @@ describe('codeclimate', () => {
           '--debug'
         ],
         {
+          cwd: '/fake-path/repository',
           env: {
             GIT_BRANCH: 'the-branch',
             GIT_COMMIT_SHA: 'the-hash',
@@ -399,6 +511,7 @@ describe('codeclimate', () => {
 
       await expect(
         collectCoverage({
+          repositoryRootPath: '/fake-path/repository',
           codeClimateExecutable: 'code-climate-executable-path',
           absolutePathToOutputFolder: '/fake-output-path',
           coverageFilePatternsAndTypes: [
@@ -418,13 +531,15 @@ describe('codeclimate', () => {
     it('should run proper command', async () => {
       await runAfterBuild({
         codeClimateExecutable: 'code-climate-executable-path',
-        lastCommandExitCode: 42
+        lastCommandExitCode: 42,
+        repositoryRootPath: '/fake-path/repository'
       })
 
       expect(exec.exec).toHaveBeenCalledWith(
         'code-climate-executable-path',
         ['after-build', '--exit-code', '42'],
         {
+          cwd: '/fake-path/repository',
           env: {
             GIT_BRANCH: 'the-branch',
             GIT_COMMIT_SHA: 'the-hash',
@@ -440,7 +555,8 @@ describe('codeclimate', () => {
       await expect(
         runAfterBuild({
           codeClimateExecutable: 'code-climate-executable-path',
-          lastCommandExitCode: 42
+          lastCommandExitCode: 42,
+          repositoryRootPath: '/fake-path/repository'
         })
       ).rejects.toThrow('after-build command failed')
     })
