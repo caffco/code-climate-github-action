@@ -37,11 +37,10 @@ describe('download', () => {
     jest
       .spyOn(fs, 'chmod')
       .mockImplementation((absolutePath, fileMode, callback) => callback(null))
-    jest
-      .spyOn(fs, 'stat')
-      .mockImplementation((absolutePath, callback) =>
-        callback(null, ({size: 0} as unknown) as fs.Stats)
-      )
+    jest.spyOn(fs, 'stat').mockImplementation((absolutePath, callback) => {
+      const cb = callback as (err: Error | null, stats: fs.Stats) => void
+      cb(null, ({size: 0} as unknown) as fs.Stats)
+    })
     jest
       .spyOn(fsUtils, 'getTemporalFileAbsolutePath')
       .mockResolvedValue('/tmp/fake-folder/fake-file')
