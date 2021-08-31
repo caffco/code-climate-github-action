@@ -2,7 +2,12 @@ import {platform} from 'os'
 import fs from 'fs'
 import * as core from '@actions/core'
 import fetch from 'node-fetch'
+import {promisify} from 'util'
+
 import {getTemporalFileAbsolutePath} from './fs'
+
+const chmodAsync = promisify(fs.chmod)
+const statAsync = promisify(fs.stat)
 
 export async function downloadCodeClimateExecutable(): Promise<string> {
   const executableFilename = `test-reporter-latest-${platform()}-amd64`
@@ -25,22 +30,14 @@ export async function downloadCodeClimateExecutable(): Promise<string> {
 
   response.body.pipe(writeStream)
 
-  await new Promise<void>((resolve, reject) =>
-    fs.chmod(temporalFileAbsolutePath, 0o775, error =>
-      error ? reject(error) : resolve()
-    )
-  )
+  await chmodAsync(temporalFileAbsolutePath, 0o775)
 
   await new Promise<void>((resolve, reject) => {
     writeStream.on('close', () => resolve())
     writeStream.on('error', error => reject(error))
   })
 
-  const stats = await new Promise<fs.Stats>((resolve, reject) =>
-    fs.stat(temporalFileAbsolutePath, (error, data) =>
-      error ? reject(error) : resolve(data)
-    )
-  )
+  const stats = await statAsync(temporalFileAbsolutePath)
 
   core.debug(
     `Code Climate reporter downloaded to ${temporalFileAbsolutePath}. Size ${stats.size} bytes`
