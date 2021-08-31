@@ -20,17 +20,17 @@ describe('download', () => {
         callback()
       }
     })
-  const createWriteStreamReturnValue = ({
+  const createWriteStreamReturnValue = {
     on: fsWriteStreamOnSpy
-  } as unknown) as ReturnType<typeof fs.createWriteStream>
+  } as unknown as ReturnType<typeof fs.createWriteStream>
 
   beforeEach(() => {
     jest.spyOn(os, 'platform').mockReturnValue('linux')
-    jest.spyOn(fetch, 'default').mockResolvedValue(({
+    jest.spyOn(fetch, 'default').mockResolvedValue({
       body: {
         pipe: fetchResponseBodyPipeSpy
       }
-    } as unknown) as ReturnType<typeof fetch.default>)
+    } as unknown as ReturnType<typeof fetch.default>)
     jest
       .spyOn(fs, 'createWriteStream')
       .mockReturnValue(createWriteStreamReturnValue)
@@ -39,7 +39,7 @@ describe('download', () => {
       .mockImplementation((absolutePath, fileMode, callback) => callback(null))
     jest.spyOn(fs, 'stat').mockImplementation((absolutePath, callback) => {
       const cb = callback as (err: Error | null, stats: fs.Stats) => void
-      cb(null, ({size: 0} as unknown) as fs.Stats)
+      cb(null, {size: 0} as unknown as fs.Stats)
     })
     jest
       .spyOn(fsUtils, 'getTemporalFileAbsolutePath')
@@ -77,6 +77,16 @@ describe('download', () => {
         '/tmp/fake-folder/fake-file',
         0o775,
         expect.anything()
+      )
+    })
+
+    it('should reject promise on download error', async () => {
+      ;(fetch.default as unknown as jest.SpyInstance).mockResolvedValueOnce({
+        body: null
+      } as unknown as ReturnType<typeof fetch.default>)
+
+      await expect(downloadCodeClimateExecutable()).rejects.toThrow(
+        'Failed to get body from CodeClimate executable request response'
       )
     })
 
