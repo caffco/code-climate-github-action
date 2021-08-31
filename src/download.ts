@@ -16,6 +16,13 @@ export async function downloadCodeClimateExecutable(): Promise<string> {
   const response = await fetch(executableUrl)
 
   const writeStream = fs.createWriteStream(temporalFileAbsolutePath)
+
+  if (!response.body) {
+    throw new Error(
+      'Failed to get body from CodeClimate executable request response'
+    )
+  }
+
   response.body.pipe(writeStream)
 
   await new Promise<void>((resolve, reject) =>
