@@ -38,7 +38,7 @@
     "@types/jest": "^27.4.1",
     "@types/node": "^15.3.1",
     "@types/node-fetch": "^3.0.3",
-    "@typescript-eslint/parser": "^5.18.0",
+    "@typescript-eslint/parser": "^5.19.0",
     "@vercel/ncc": "^0.33.3",
     "babel-jest": "^27.5.1",
     "eslint": "^7.32.0",
