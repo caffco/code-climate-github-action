@@ -33,7 +33,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.17.9",
-    "@babel/preset-env": "^7.16.11",
+    "@babel/preset-env": "^7.17.10",
     "@changesets/cli": "^2.22.0",
     "@types/jest": "^27.4.1",
     "@types/node": "^15.3.1",
