@@ -8,7 +8,12 @@ import {downloadCodeClimateExecutable} from './download'
 jest.mock('@actions/core')
 jest.mock('node-fetch')
 jest.mock('os')
-jest.mock('fs')
+jest.mock('fs', () => ({
+  ...jest.requireActual('fs'),
+  chmod: jest.fn(),
+  stat: jest.fn(),
+  createWriteStream: jest.fn()
+}))
 jest.mock('./fs')
 
 describe('download', () => {
