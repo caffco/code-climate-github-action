@@ -1,13 +1,15 @@
 import * as fetch from 'node-fetch'
-import * as os from 'os'
-import * as fs from 'fs'
+import {platform} from 'os'
+import fs from 'fs'
 import * as fsUtils from './fs'
 
 import {downloadCodeClimateExecutable} from './download'
 
 jest.mock('@actions/core')
 jest.mock('node-fetch')
-jest.mock('os')
+jest.mock('os', () => ({
+  platform: jest.fn().mockReturnValue(null)
+}))
 jest.mock('fs', () => ({
   ...jest.requireActual('fs'),
   chmod: jest.fn(),
@@ -30,7 +32,7 @@ describe('download', () => {
   } as unknown as ReturnType<typeof fs.createWriteStream>
 
   beforeEach(() => {
-    jest.spyOn(os, 'platform').mockReturnValue('linux')
+    ;(platform as unknown as jest.SpyInstance).mockReturnValue('linux')
     jest.spyOn(fetch, 'default').mockResolvedValue({
       body: {
         pipe: fetchResponseBodyPipeSpy

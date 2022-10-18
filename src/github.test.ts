@@ -11,10 +11,12 @@ describe('Github', () => {
       it('should return proper value', () => {
         jest.spyOn(core, 'getInput').mockImplementation(
           key =>
-            (({
-              coverage_file_patterns:
-                'fake-pattern-one:lcov\nfake-pattern-two:junit'
-            } as Record<string, string>)[key])
+            ((
+              {
+                coverage_file_patterns:
+                  'fake-pattern-one:lcov\nfake-pattern-two:junit'
+              } as Record<string, string>
+            )[key])
         )
 
         expect(getOptionsFromGithubActionInput()).toHaveProperty(
@@ -30,9 +32,12 @@ describe('Github', () => {
       it('should throw an error if some pattern does not have type', () => {
         jest.spyOn(core, 'getInput').mockImplementation(
           key =>
-            (({
-              coverage_file_patterns: 'fake-pattern-one:lcov\nfake-pattern-two'
-            } as Record<string, string>)[key])
+            ((
+              {
+                coverage_file_patterns:
+                  'fake-pattern-one:lcov\nfake-pattern-two'
+              } as Record<string, string>
+            )[key])
         )
 
         expect(() => getOptionsFromGithubActionInput()).toThrow(
@@ -43,10 +48,12 @@ describe('Github', () => {
       it('should take only last segment as type', () => {
         jest.spyOn(core, 'getInput').mockImplementation(
           key =>
-            (({
-              coverage_file_patterns:
-                'fake-pattern:one:lcov\nfake-pattern:two:junit'
-            } as Record<string, string>)[key])
+            ((
+              {
+                coverage_file_patterns:
+                  'fake-pattern:one:lcov\nfake-pattern:two:junit'
+              } as Record<string, string>
+            )[key])
         )
 
         expect(getOptionsFromGithubActionInput()).toHaveProperty(
@@ -63,10 +70,12 @@ describe('Github', () => {
       it('should be «true» when `run_before_build` is "true"', () => {
         jest.spyOn(core, 'getInput').mockImplementation(
           key =>
-            (({
-              coverage_file_patterns: 'fake-pattern-one:lcov',
-              run_before_build: 'true'
-            } as Record<string, string>)[key])
+            ((
+              {
+                coverage_file_patterns: 'fake-pattern-one:lcov',
+                run_before_build: 'true'
+              } as Record<string, string>
+            )[key])
         )
 
         expect(getOptionsFromGithubActionInput()).toHaveProperty(
@@ -79,10 +88,12 @@ describe('Github', () => {
       it('should be «false» when `run_before_build` is "false"', () => {
         jest.spyOn(core, 'getInput').mockImplementation(
           key =>
-            (({
-              coverage_file_patterns: 'fake-pattern-one:lcov',
-              run_before_build: 'false'
-            } as Record<string, string>)[key])
+            ((
+              {
+                coverage_file_patterns: 'fake-pattern-one:lcov',
+                run_before_build: 'false'
+              } as Record<string, string>
+            )[key])
         )
 
         expect(getOptionsFromGithubActionInput()).toHaveProperty(
@@ -97,10 +108,12 @@ describe('Github', () => {
       it('should be «true» when `collect_coverage` is "true"', () => {
         jest.spyOn(core, 'getInput').mockImplementation(
           key =>
-            (({
-              coverage_file_patterns: 'fake-pattern-one:lcov',
-              collect_coverage: 'true'
-            } as Record<string, string>)[key])
+            ((
+              {
+                coverage_file_patterns: 'fake-pattern-one:lcov',
+                collect_coverage: 'true'
+              } as Record<string, string>
+            )[key])
         )
 
         expect(getOptionsFromGithubActionInput()).toHaveProperty(
@@ -113,10 +126,12 @@ describe('Github', () => {
       it('should be «false» when `collect_coverage` is "false"', () => {
         jest.spyOn(core, 'getInput').mockImplementation(
           key =>
-            (({
-              coverage_file_patterns: 'fake-pattern-one:lcov',
-              collect_coverage: 'false'
-            } as Record<string, string>)[key])
+            ((
+              {
+                coverage_file_patterns: 'fake-pattern-one:lcov',
+                collect_coverage: 'false'
+              } as Record<string, string>
+            )[key])
         )
 
         expect(getOptionsFromGithubActionInput()).toHaveProperty(
@@ -131,10 +146,12 @@ describe('Github', () => {
       it('should be «true» when `run_after_build` is "true"', () => {
         jest.spyOn(core, 'getInput').mockImplementation(
           key =>
-            (({
-              coverage_file_patterns: 'fake-pattern-one:lcov',
-              run_after_build: 'true'
-            } as Record<string, string>)[key])
+            ((
+              {
+                coverage_file_patterns: 'fake-pattern-one:lcov',
+                run_after_build: 'true'
+              } as Record<string, string>
+            )[key])
         )
 
         expect(getOptionsFromGithubActionInput()).toHaveProperty(
@@ -147,10 +164,12 @@ describe('Github', () => {
       it('should be «false» when `run_after_build` is "false"', () => {
         jest.spyOn(core, 'getInput').mockImplementation(
           key =>
-            (({
-              coverage_file_patterns: 'fake-pattern-one:lcov',
-              run_after_build: 'false'
-            } as Record<string, string>)[key])
+            ((
+              {
+                coverage_file_patterns: 'fake-pattern-one:lcov',
+                run_after_build: 'false'
+              } as Record<string, string>
+            )[key])
         )
 
         expect(getOptionsFromGithubActionInput()).toHaveProperty(
@@ -165,10 +184,12 @@ describe('Github', () => {
       it('should parse `last_command_exit_code`', async () => {
         jest.spyOn(core, 'getInput').mockImplementation(
           key =>
-            (({
-              coverage_file_patterns: 'fake-pattern-one:lcov',
-              last_command_exit_code: '42'
-            } as Record<string, string>)[key])
+            ((
+              {
+                coverage_file_patterns: 'fake-pattern-one:lcov',
+                last_command_exit_code: '42'
+              } as Record<string, string>
+            )[key])
         )
 
         expect(getOptionsFromGithubActionInput()).toHaveProperty(
@@ -180,9 +201,11 @@ describe('Github', () => {
       it('should fall back to 0', async () => {
         jest.spyOn(core, 'getInput').mockImplementation(
           key =>
-            (({
-              coverage_file_patterns: 'fake-pattern-one:lcov'
-            } as Record<string, string>)[key])
+            ((
+              {
+                coverage_file_patterns: 'fake-pattern-one:lcov'
+              } as Record<string, string>
+            )[key])
         )
 
         expect(getOptionsFromGithubActionInput()).toHaveProperty(
@@ -196,10 +219,12 @@ describe('Github', () => {
       it('should parse `prefix`', async () => {
         jest.spyOn(core, 'getInput').mockImplementation(
           key =>
-            (({
-              coverage_file_patterns: 'fake-pattern-one:lcov',
-              prefix: 'the-prefix'
-            } as Record<string, string>)[key])
+            ((
+              {
+                coverage_file_patterns: 'fake-pattern-one:lcov',
+                prefix: 'the-prefix'
+              } as Record<string, string>
+            )[key])
         )
 
         expect(getOptionsFromGithubActionInput()).toHaveProperty(
@@ -211,9 +236,11 @@ describe('Github', () => {
       it('should allow being undefined', async () => {
         jest.spyOn(core, 'getInput').mockImplementation(
           key =>
-            (({
-              coverage_file_patterns: 'fake-pattern-one:lcov'
-            } as Record<string, string>)[key])
+            ((
+              {
+                coverage_file_patterns: 'fake-pattern-one:lcov'
+              } as Record<string, string>
+            )[key])
         )
 
         expect(getOptionsFromGithubActionInput()).toHaveProperty(
@@ -227,10 +254,12 @@ describe('Github', () => {
       it('should parse `repository_root_path`', async () => {
         jest.spyOn(core, 'getInput').mockImplementation(
           key =>
-            (({
-              coverage_file_patterns: 'fake-pattern-one:lcov',
-              repository_root_path: 'the-path'
-            } as Record<string, string>)[key])
+            ((
+              {
+                coverage_file_patterns: 'fake-pattern-one:lcov',
+                repository_root_path: 'the-path'
+              } as Record<string, string>
+            )[key])
         )
 
         expect(getOptionsFromGithubActionInput()).toHaveProperty(
