@@ -21,9 +21,7 @@ function getEnvironmentFromPullRequest(
       }
 }
 
-export function getEnvironment(
-  env: Record<string, string | undefined>
-): {
+export function getEnvironment(env: Record<string, string | undefined>): {
   GIT_BRANCH: string
   GIT_COMMIT_SHA: string
   CC_TEST_REPORTER_ID: string

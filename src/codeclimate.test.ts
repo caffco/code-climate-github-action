@@ -21,14 +21,14 @@ describe('codeclimate', () => {
       GIT_COMMIT_SHA: 'the-hash',
       CC_TEST_REPORTER_ID: 'reporter-id'
     })
-    jest.spyOn(glob, 'create').mockResolvedValue(({
+    jest.spyOn(glob, 'create').mockResolvedValue({
       glob: globSpy
-    } as unknown) as ReturnType<typeof glob.create>)
+    } as unknown as ReturnType<typeof glob.create>)
   })
 
   afterEach(() => {
     jest.restoreAllMocks()
-    ;((core.isDebug as unknown) as jest.SpyInstance).mockRestore()
+    ;(core.isDebug as unknown as jest.SpyInstance).mockRestore()
   })
 
   describe('#runBeforeBuild', () => {
