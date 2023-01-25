@@ -24,6 +24,7 @@ describe('codeclimate', () => {
     jest.spyOn(glob, 'create').mockResolvedValue({
       glob: globSpy
     } as unknown as ReturnType<typeof glob.create>)
+    jest.spyOn(core, 'isDebug').mockReturnValue(false)
   })
 
   afterEach(() => {
