@@ -1,4 +1,4 @@
-import * as fetch from 'node-fetch'
+import fetch from 'node-fetch'
 import {platform} from 'os'
 import fs from 'fs'
 import * as fsUtils from './fs'
@@ -6,7 +6,10 @@ import * as fsUtils from './fs'
 import {downloadCodeClimateExecutable} from './download'
 
 jest.mock('@actions/core')
-jest.mock('node-fetch')
+jest.mock('node-fetch', () => ({
+  __esModule: true,
+  default: jest.fn()
+}))
 jest.mock('os', () => ({
   platform: jest.fn().mockReturnValue(null)
 }))
@@ -20,34 +23,35 @@ jest.mock('./fs')
 
 describe('download', () => {
   const fetchResponseBodyPipeSpy = jest.fn()
-  const fsWriteStreamOnSpy = jest
-    .fn()
-    .mockImplementation((eventName, callback) => {
-      if (eventName === 'close') {
-        callback()
-      }
-    })
+  const fsWriteStreamOnSpy = jest.fn()
   const createWriteStreamReturnValue = {
     on: fsWriteStreamOnSpy
   } as unknown as ReturnType<typeof fs.createWriteStream>
 
   beforeEach(() => {
+    fsWriteStreamOnSpy.mockImplementation((eventName, callback) => {
+      if (eventName === 'close') {
+        callback()
+      }
+    })
     ;(platform as unknown as jest.SpyInstance).mockReturnValue('linux')
-    jest.spyOn(fetch, 'default').mockResolvedValue({
+    ;(fetch as unknown as jest.Mock).mockResolvedValue({
       body: {
         pipe: fetchResponseBodyPipeSpy
       }
-    } as unknown as ReturnType<typeof fetch.default>)
-    jest
-      .spyOn(fs, 'createWriteStream')
-      .mockReturnValue(createWriteStreamReturnValue)
-    jest
-      .spyOn(fs, 'chmod')
-      .mockImplementation((absolutePath, fileMode, callback) => callback(null))
-    jest.spyOn(fs, 'stat').mockImplementation((absolutePath, callback) => {
-      const cb = callback as (err: Error | null, stats: fs.Stats) => void
-      cb(null, {size: 0} as unknown as fs.Stats)
-    })
+    } as unknown as ReturnType<typeof fetch>)
+    ;(fs.createWriteStream as unknown as jest.Mock).mockReturnValue(
+      createWriteStreamReturnValue
+    )
+    ;(fs.chmod as unknown as jest.Mock).mockImplementation(
+      (absolutePath, fileMode, callback) => callback(null)
+    )
+    ;(fs.stat as unknown as jest.Mock).mockImplementation(
+      (absolutePath, callback) => {
+        const cb = callback as (err: Error | null, stats: fs.Stats) => void
+        cb(null, {size: 0} as unknown as fs.Stats)
+      }
+    )
     jest
       .spyOn(fsUtils, 'getTemporalFileAbsolutePath')
       .mockResolvedValue('/tmp/fake-folder/fake-file')
@@ -61,7 +65,7 @@ describe('download', () => {
     it('should download proper file', async () => {
       await downloadCodeClimateExecutable()
 
-      expect(fetch.default).toHaveBeenCalledWith(
+      expect(fetch).toHaveBeenCalledWith(
         'https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64'
       )
     })
@@ -88,9 +92,9 @@ describe('download', () => {
     })
 
     it('should reject promise on download error', async () => {
-      ;(fetch.default as unknown as jest.SpyInstance).mockResolvedValueOnce({
+      ;(fetch as unknown as jest.SpyInstance).mockResolvedValueOnce({
         body: null
-      } as unknown as ReturnType<typeof fetch.default>)
+      } as unknown as ReturnType<typeof fetch>)
 
       await expect(downloadCodeClimateExecutable()).rejects.toThrow(
         'Failed to get body from CodeClimate executable request response'
