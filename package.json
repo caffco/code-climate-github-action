@@ -30,7 +30,7 @@
   "devDependencies": {
     "@babel/core": "^7.21.3",
     "@babel/preset-env": "^7.20.2",
-    "@changesets/cli": "^2.26.0",
+    "@changesets/cli": "^2.26.1",
     "@types/jest": "^29.5.0",
     "@types/node": "^18.11.9",
     "@types/node-fetch": "^2.6.2",
