@@ -1,11 +1,13 @@
-import * as github from './github'
-import * as download from './download'
+import {beforeEach, describe, expect, it, vi} from 'vitest'
+
+import {getOptionsFromGithubActionInput} from './github'
+import {downloadCodeClimateExecutable} from './download'
 import * as codeclimate from './codeclimate'
 import main from './main'
 
-jest.mock('./github')
-jest.mock('./download')
-jest.mock('./codeclimate')
+vi.mock('./github')
+vi.mock('./download')
+vi.mock('./codeclimate')
 
 describe('main', () => {
   const baseInput = {
@@ -18,26 +20,21 @@ describe('main', () => {
   }
 
   beforeEach(() => {
-    jest
-      .spyOn(github, 'getOptionsFromGithubActionInput')
-      .mockReturnValue(baseInput)
-    jest
-      .spyOn(download, 'downloadCodeClimateExecutable')
-      .mockResolvedValue('/fake-path/code-climate')
-  })
-
-  afterEach(() => {
-    jest.restoreAllMocks()
+    vi.clearAllMocks()
+    vi.mocked(getOptionsFromGithubActionInput).mockReturnValue(baseInput)
+    vi.mocked(downloadCodeClimateExecutable).mockResolvedValue(
+      '/fake-path/code-climate'
+    )
   })
 
   it('should get options from Github action input', async () => {
     await main()
 
-    expect(github.getOptionsFromGithubActionInput).toHaveBeenCalled()
+    expect(getOptionsFromGithubActionInput).toHaveBeenCalled()
   })
 
   it('should run before build when asked for', async () => {
-    jest.spyOn(github, 'getOptionsFromGithubActionInput').mockReturnValue({
+    vi.mocked(getOptionsFromGithubActionInput).mockReturnValue({
       ...baseInput,
       runBeforeBuild: true
     })
@@ -51,7 +48,7 @@ describe('main', () => {
   })
 
   it('should skip running before build when not asked for', async () => {
-    jest.spyOn(github, 'getOptionsFromGithubActionInput').mockReturnValue({
+    vi.mocked(getOptionsFromGithubActionInput).mockReturnValue({
       ...baseInput,
       runBeforeBuild: false
     })
@@ -62,7 +59,7 @@ describe('main', () => {
   })
 
   it('should collect coverage info when asked for', async () => {
-    jest.spyOn(github, 'getOptionsFromGithubActionInput').mockReturnValue({
+    vi.mocked(getOptionsFromGithubActionInput).mockReturnValue({
       ...baseInput,
       collectCoverage: true,
       coverageFilePatterns: [
@@ -90,7 +87,7 @@ describe('main', () => {
   })
 
   it('should skip collecting coverage info when not asked for', async () => {
-    jest.spyOn(github, 'getOptionsFromGithubActionInput').mockReturnValue({
+    vi.mocked(getOptionsFromGithubActionInput).mockReturnValue({
       ...baseInput,
       collectCoverage: false
     })
@@ -101,7 +98,7 @@ describe('main', () => {
   })
 
   it('should run after build when asked for', async () => {
-    jest.spyOn(github, 'getOptionsFromGithubActionInput').mockReturnValue({
+    vi.mocked(getOptionsFromGithubActionInput).mockReturnValue({
       ...baseInput,
       runAfterBuild: true
     })
@@ -116,7 +113,7 @@ describe('main', () => {
   })
 
   it('should skip running after build when not asked for', async () => {
-    jest.spyOn(github, 'getOptionsFromGithubActionInput').mockReturnValue({
+    vi.mocked(getOptionsFromGithubActionInput).mockReturnValue({
       ...baseInput,
       runAfterBuild: false
     })
