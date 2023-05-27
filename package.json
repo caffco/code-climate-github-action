@@ -1,6 +1,6 @@
 {
   "name": "@caff/code-climate-github-action",
-  "version": "0.0.2-alpha.1",
+  "version": "0.0.2",
   "description": "A Github action to upload code coverage infomation to Code Climate",
   "main": "lib/index.js",
   "repository": "https://github.com/caffco/code-climate-github-action",
