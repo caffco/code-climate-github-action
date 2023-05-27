@@ -28,6 +28,8 @@
     "all": "run-s format lint test build"
   },
   "devDependencies": {
+    "@action-validator/core": "^0.5.1",
+    "@action-validator/cli": "^0.5.1",
     "@babel/core": "^7.22.1",
     "@babel/preset-env": "^7.22.2",
     "@changesets/cli": "^2.26.1",
