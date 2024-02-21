@@ -1,5 +1,11 @@
 # @caff/code-climate-github-action
 
+## 0.0.3
+
+### Patch Changes
+
+- Use Node 20 runtime
+
 ## 0.0.2
 
 ### Patch Changes
