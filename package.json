@@ -37,7 +37,7 @@
     "@types/node": "^18.11.9",
     "@typescript-eslint/parser": "^7.9.0",
     "@vitest/coverage-v8": "^1.6.0",
-    "esbuild": "^0.21.2",
+    "esbuild": "^0.21.3",
     "eslint-plugin-github": "^4.4.0",
     "eslint-plugin-jest": "^28.5.0",
     "eslint": "^8.57.0",
