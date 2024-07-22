@@ -35,7 +35,7 @@
     "@changesets/cli": "^2.27.7",
     "@types/node-fetch": "^2.6.4",
     "@types/node": "^18.11.9",
-    "@typescript-eslint/parser": "^7.16.1",
+    "@typescript-eslint/parser": "^7.17.0",
     "@vitest/coverage-v8": "^2.0.4",
     "esbuild": "^0.23.0",
     "eslint-plugin-github": "^4.4.0",
