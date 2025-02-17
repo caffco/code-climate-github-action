@@ -32,7 +32,7 @@
     "@actions/exec": "^1.1.1",
     "@actions/github": "^6.0.0",
     "@actions/glob": "^0.5.0",
-    "@changesets/cli": "^2.27.12",
+    "@changesets/cli": "^2.28.0",
     "@types/node-fetch": "^2.6.4",
     "@types/node": "^18.11.9",
     "@typescript-eslint/parser": "^8.24.0",
