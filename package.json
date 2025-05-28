@@ -39,7 +39,7 @@
     "@vitest/coverage-v8": "^2.0.5",
     "esbuild": "^0.25.5",
     "eslint-plugin-github": "^4.4.0",
-    "eslint-plugin-jest": "^28.11.0",
+    "eslint-plugin-jest": "^28.11.1",
     "eslint": "^8.57.1",
     "husky": "^8.0.1",
     "lint-staged": "^16.1.0",
