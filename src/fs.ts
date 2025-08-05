@@ -1,5 +1,5 @@
-import fs from 'fs'
-import {resolve as resolvePath} from 'path'
+import fs from 'node:fs'
+import { resolve as resolvePath } from 'node:path'
 
 async function getTemporalFolderAbsolutePath(prefix: string): Promise<string> {
   return new Promise<string>((resolve, reject) =>
@@ -21,7 +21,7 @@ export async function getTemporalFileAbsolutePath({
   const absolutePathToFile = resolvePath(temporalFolder, filename)
 
   await new Promise<void>((resolve, reject) =>
-    fs.writeFile(absolutePathToFile, '', error =>
+    fs.writeFile(absolutePathToFile, '', (error) =>
       error ? reject(error) : resolve()
     )
   )

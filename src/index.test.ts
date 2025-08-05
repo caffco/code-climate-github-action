@@ -1,9 +1,7 @@
-import {describe, expect, it, vi} from 'vitest'
-
 import * as core from '@actions/core'
+import { describe, expect, it, vi } from 'vitest'
+import { run } from './'
 import main from './main'
-
-import {run} from './'
 
 vi.mock('@actions/core')
 vi.mock('./main')

@@ -1,4 +1,4 @@
-import {context} from '@actions/github'
+import { context } from '@actions/github'
 
 function getGitBranchNameWithoutOrigin(branchName: string): string {
   return branchName.replace(/^refs\/heads\//, '')
@@ -13,7 +13,7 @@ function getEnvironmentFromPullRequest(
   return env.GITHUB_EVENT_NAME === 'pull_request'
     ? {
         GIT_BRANCH: env.GITHUB_HEAD_REF ?? null,
-        GIT_COMMIT_SHA: context.payload.pull_request?.['head']?.['sha'] ?? null
+        GIT_COMMIT_SHA: context.payload.pull_request?.head?.sha ?? null
       }
     : {
         GIT_BRANCH: null,

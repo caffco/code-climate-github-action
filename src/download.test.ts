@@ -1,11 +1,9 @@
-import {beforeEach, describe, expect, it, vi} from 'vitest'
-
+import fs from 'node:fs'
+import { platform } from 'node:os'
 import fetch from 'node-fetch'
-import {platform} from 'os'
-import fs from 'fs'
-import {getTemporalFileAbsolutePath} from './fs'
-
-import {downloadCodeClimateExecutable} from './download'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { downloadCodeClimateExecutable } from './download'
+import { getTemporalFileAbsolutePath } from './fs'
 
 vi.mock('@actions/core')
 vi.mock('node-fetch', () => ({
@@ -44,12 +42,12 @@ beforeEach(() => {
     }
   } as never)
   vi.mocked(fs.createWriteStream).mockReturnValue(createWriteStreamReturnValue)
-  vi.mocked(fs.chmod).mockImplementation((absolutePath, fileMode, callback) =>
+  vi.mocked(fs.chmod).mockImplementation((_absolutePath, _fileMode, callback) =>
     callback(null)
   )
-  vi.mocked(fs.stat).mockImplementation((absolutePath, callback) => {
+  vi.mocked(fs.stat).mockImplementation((_absolutePath, callback) => {
     const cb = callback as (err: Error | null, stats: fs.Stats) => void
-    cb(null, {size: 0} as unknown as fs.Stats)
+    cb(null, { size: 0 } as unknown as fs.Stats)
   })
   vi.mocked(getTemporalFileAbsolutePath).mockResolvedValue(
     '/tmp/fake-folder/fake-file'
