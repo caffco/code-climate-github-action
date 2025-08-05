@@ -1,5 +1,5 @@
-[![Maintainability][maintainabilityimageurl]]([maintainabilityUrl])
-[![Test Coverage][testcoverageimageurl]]([testcoverageUrl])
+[![Maintainability][maintainabilityimageurl]](https://codeclimate.com/github/caffco/code-climate-github-action/maintainability)
+[![Test Coverage][testcoverageimageurl]]([https://codeclimate.com/github/caffco/code-climate-github-action/test_coverage])
 
 # Code Climate
 
@@ -43,7 +43,5 @@ jobs:
           run_after_build: 'true'
 ```
 
-[maintainabilityurl]: https://codeclimate.com/github/caffco/code-climate-github-action/maintainability
 [maintainabilityimageurl]: https://api.codeclimate.com/v1/badges/f28434b0cf06574fb720/maintainability
 [testcoverageimageurl]: https://api.codeclimate.com/v1/badges/f28434b0cf06574fb720/test_coverage
-[testcoverageurl]: https://codeclimate.com/github/caffco/code-climate-github-action/test_coverage
