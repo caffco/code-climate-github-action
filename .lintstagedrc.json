@@ -1,5 +1,5 @@
 {
-  "*.(ts|js)": ["biome lint --write"],
-  "*.(ts|json|js|md)": ["biome check --write"],
+  "*.(ts)": ["biome lint --write"],
+  "*.(ts|json|md)": ["biome check --write"],
   ".github/workflows/*.(yaml|yml)": ["action-validator"]
 }
