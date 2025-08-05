@@ -1,9 +1,9 @@
+import { resolve as resolvePath } from 'node:path'
 import * as core from '@actions/core'
+import { exec } from '@actions/exec'
 import * as glob from '@actions/glob'
-import {exec} from '@actions/exec'
-import {resolve as resolvePath} from 'path'
 
-import {getEnvironment} from './environment'
+import { getEnvironment } from './environment'
 
 export async function runBeforeBuild({
   repositoryRootPath,
@@ -41,7 +41,7 @@ function getFormatCoverageCommandParams({
   index: number
   prefix?: string
   absolutePathToOutputFolder: string
-}): {parameters: string[]; absolutePathToFormattedCoverage: string} {
+}): { parameters: string[]; absolutePathToFormattedCoverage: string } {
   const absolutePathToFormattedCoverage = resolvePath(
     absolutePathToOutputFolder,
     `codeclimate.${patternNumber}.${index}.json`
@@ -70,7 +70,7 @@ function getFormatCoverageCommandParams({
 }
 
 function getReadableParameters(parameters: string[]): string {
-  const readableParameters = parameters.map(param => `«${param}»`).join(', ')
+  const readableParameters = parameters.map((param) => `«${param}»`).join(', ')
   return `Parameters: [ ${readableParameters} ]`
 }
 
@@ -89,7 +89,7 @@ async function formatCoverageOfType({
   absolutePathToOutputFolder: string
   repositoryRootPath: string
 }): Promise<string[]> {
-  const {pattern, type} = patternAndType
+  const { pattern, type } = patternAndType
   const globber = await glob.create(pattern)
   const absolutePathsToFiles = await globber.glob()
 
@@ -125,7 +125,7 @@ async function formatCoverageOfType({
   }
 
   return formatCoverageCommands.map(
-    ({absolutePathToFormattedCoverage}) => absolutePathToFormattedCoverage
+    ({ absolutePathToFormattedCoverage }) => absolutePathToFormattedCoverage
   )
 }
 

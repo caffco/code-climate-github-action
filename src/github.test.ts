@@ -1,7 +1,6 @@
-import {describe, expect, it, vi} from 'vitest'
-
-import {getInput} from '@actions/core'
-import {getOptionsFromGithubActionInput} from './github'
+import { getInput } from '@actions/core'
+import { describe, expect, it, vi } from 'vitest'
+import { getOptionsFromGithubActionInput } from './github'
 
 vi.mock('@actions/core')
 
@@ -9,20 +8,20 @@ describe('#getOptionsFromGithubActionInput', () => {
   describe('`coverageFilePatterns`', () => {
     it('should return proper value', () => {
       vi.mocked(getInput).mockImplementation(
-        key =>
-          ((
-            {
+        (key) =>
+          (
+            ({
               coverage_file_patterns:
                 'fake-pattern-one:lcov\nfake-pattern-two:junit'
-            } as Record<string, string>
-          )[key])
+            }) as Record<string, string>
+          )[key]
       )
 
       expect(getOptionsFromGithubActionInput()).toHaveProperty(
         'coverageFilePatterns',
         [
-          {pattern: 'fake-pattern-one', type: 'lcov'},
-          {pattern: 'fake-pattern-two', type: 'junit'}
+          { pattern: 'fake-pattern-one', type: 'lcov' },
+          { pattern: 'fake-pattern-two', type: 'junit' }
         ]
       )
       expect(getInput).toHaveBeenCalledWith('coverage_file_patterns')
@@ -30,12 +29,12 @@ describe('#getOptionsFromGithubActionInput', () => {
 
     it('should throw an error if some pattern does not have type', () => {
       vi.mocked(getInput).mockImplementation(
-        key =>
-          ((
-            {
+        (key) =>
+          (
+            ({
               coverage_file_patterns: 'fake-pattern-one:lcov\nfake-pattern-two'
-            } as Record<string, string>
-          )[key])
+            }) as Record<string, string>
+          )[key]
       )
 
       expect(() => getOptionsFromGithubActionInput()).toThrow(
@@ -45,20 +44,20 @@ describe('#getOptionsFromGithubActionInput', () => {
 
     it('should take only last segment as type', () => {
       vi.mocked(getInput).mockImplementation(
-        key =>
-          ((
-            {
+        (key) =>
+          (
+            ({
               coverage_file_patterns:
                 'fake-pattern:one:lcov\nfake-pattern:two:junit'
-            } as Record<string, string>
-          )[key])
+            }) as Record<string, string>
+          )[key]
       )
 
       expect(getOptionsFromGithubActionInput()).toHaveProperty(
         'coverageFilePatterns',
         [
-          {pattern: 'fake-pattern:one', type: 'lcov'},
-          {pattern: 'fake-pattern:two', type: 'junit'}
+          { pattern: 'fake-pattern:one', type: 'lcov' },
+          { pattern: 'fake-pattern:two', type: 'junit' }
         ]
       )
     })
@@ -67,13 +66,13 @@ describe('#getOptionsFromGithubActionInput', () => {
   describe('`runBeforeBuild`', () => {
     it('should be «true» when `run_before_build` is "true"', () => {
       vi.mocked(getInput).mockImplementation(
-        key =>
-          ((
-            {
+        (key) =>
+          (
+            ({
               coverage_file_patterns: 'fake-pattern-one:lcov',
               run_before_build: 'true'
-            } as Record<string, string>
-          )[key])
+            }) as Record<string, string>
+          )[key]
       )
 
       expect(getOptionsFromGithubActionInput()).toHaveProperty(
@@ -85,13 +84,13 @@ describe('#getOptionsFromGithubActionInput', () => {
 
     it('should be «false» when `run_before_build` is "false"', () => {
       vi.mocked(getInput).mockImplementation(
-        key =>
-          ((
-            {
+        (key) =>
+          (
+            ({
               coverage_file_patterns: 'fake-pattern-one:lcov',
               run_before_build: 'false'
-            } as Record<string, string>
-          )[key])
+            }) as Record<string, string>
+          )[key]
       )
 
       expect(getOptionsFromGithubActionInput()).toHaveProperty(
@@ -105,13 +104,13 @@ describe('#getOptionsFromGithubActionInput', () => {
   describe('`collectCoverage`', () => {
     it('should be «true» when `collect_coverage` is "true"', () => {
       vi.mocked(getInput).mockImplementation(
-        key =>
-          ((
-            {
+        (key) =>
+          (
+            ({
               coverage_file_patterns: 'fake-pattern-one:lcov',
               collect_coverage: 'true'
-            } as Record<string, string>
-          )[key])
+            }) as Record<string, string>
+          )[key]
       )
 
       expect(getOptionsFromGithubActionInput()).toHaveProperty(
@@ -123,13 +122,13 @@ describe('#getOptionsFromGithubActionInput', () => {
 
     it('should be «false» when `collect_coverage` is "false"', () => {
       vi.mocked(getInput).mockImplementation(
-        key =>
-          ((
-            {
+        (key) =>
+          (
+            ({
               coverage_file_patterns: 'fake-pattern-one:lcov',
               collect_coverage: 'false'
-            } as Record<string, string>
-          )[key])
+            }) as Record<string, string>
+          )[key]
       )
 
       expect(getOptionsFromGithubActionInput()).toHaveProperty(
@@ -143,13 +142,13 @@ describe('#getOptionsFromGithubActionInput', () => {
   describe('`runAfterBuild`', () => {
     it('should be «true» when `run_after_build` is "true"', () => {
       vi.mocked(getInput).mockImplementation(
-        key =>
-          ((
-            {
+        (key) =>
+          (
+            ({
               coverage_file_patterns: 'fake-pattern-one:lcov',
               run_after_build: 'true'
-            } as Record<string, string>
-          )[key])
+            }) as Record<string, string>
+          )[key]
       )
 
       expect(getOptionsFromGithubActionInput()).toHaveProperty(
@@ -161,13 +160,13 @@ describe('#getOptionsFromGithubActionInput', () => {
 
     it('should be «false» when `run_after_build` is "false"', () => {
       vi.mocked(getInput).mockImplementation(
-        key =>
-          ((
-            {
+        (key) =>
+          (
+            ({
               coverage_file_patterns: 'fake-pattern-one:lcov',
               run_after_build: 'false'
-            } as Record<string, string>
-          )[key])
+            }) as Record<string, string>
+          )[key]
       )
 
       expect(getOptionsFromGithubActionInput()).toHaveProperty(
@@ -181,13 +180,13 @@ describe('#getOptionsFromGithubActionInput', () => {
   describe('`lastCommandExitCode`', () => {
     it('should parse `last_command_exit_code`', async () => {
       vi.mocked(getInput).mockImplementation(
-        key =>
-          ((
-            {
+        (key) =>
+          (
+            ({
               coverage_file_patterns: 'fake-pattern-one:lcov',
               last_command_exit_code: '42'
-            } as Record<string, string>
-          )[key])
+            }) as Record<string, string>
+          )[key]
       )
 
       expect(getOptionsFromGithubActionInput()).toHaveProperty(
@@ -198,12 +197,12 @@ describe('#getOptionsFromGithubActionInput', () => {
 
     it('should fall back to 0', async () => {
       vi.mocked(getInput).mockImplementation(
-        key =>
-          ((
-            {
+        (key) =>
+          (
+            ({
               coverage_file_patterns: 'fake-pattern-one:lcov'
-            } as Record<string, string>
-          )[key])
+            }) as Record<string, string>
+          )[key]
       )
 
       expect(getOptionsFromGithubActionInput()).toHaveProperty(
@@ -216,13 +215,13 @@ describe('#getOptionsFromGithubActionInput', () => {
   describe('`prefix`', () => {
     it('should parse `prefix`', async () => {
       vi.mocked(getInput).mockImplementation(
-        key =>
-          ((
-            {
+        (key) =>
+          (
+            ({
               coverage_file_patterns: 'fake-pattern-one:lcov',
               prefix: 'the-prefix'
-            } as Record<string, string>
-          )[key])
+            }) as Record<string, string>
+          )[key]
       )
 
       expect(getOptionsFromGithubActionInput()).toHaveProperty(
@@ -233,12 +232,12 @@ describe('#getOptionsFromGithubActionInput', () => {
 
     it('should allow being undefined', async () => {
       vi.mocked(getInput).mockImplementation(
-        key =>
-          ((
-            {
+        (key) =>
+          (
+            ({
               coverage_file_patterns: 'fake-pattern-one:lcov'
-            } as Record<string, string>
-          )[key])
+            }) as Record<string, string>
+          )[key]
       )
 
       expect(getOptionsFromGithubActionInput()).toHaveProperty(
@@ -251,13 +250,13 @@ describe('#getOptionsFromGithubActionInput', () => {
   describe('`repositoryRootPath`', () => {
     it('should parse `repository_root_path`', async () => {
       vi.mocked(getInput).mockImplementation(
-        key =>
-          ((
-            {
+        (key) =>
+          (
+            ({
               coverage_file_patterns: 'fake-pattern-one:lcov',
               repository_root_path: 'the-path'
-            } as Record<string, string>
-          )[key])
+            }) as Record<string, string>
+          )[key]
       )
 
       expect(getOptionsFromGithubActionInput()).toHaveProperty(

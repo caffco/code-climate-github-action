@@ -1,7 +1,7 @@
-import {dirname} from 'path'
-import {getOptionsFromGithubActionInput} from './github'
-import {downloadCodeClimateExecutable} from './download'
-import {runBeforeBuild, collectCoverage, runAfterBuild} from './codeclimate'
+import { dirname } from 'node:path'
+import { collectCoverage, runAfterBuild, runBeforeBuild } from './codeclimate'
+import { downloadCodeClimateExecutable } from './download'
+import { getOptionsFromGithubActionInput } from './github'
 
 export default async function main(): Promise<void> {
   const options = getOptionsFromGithubActionInput()

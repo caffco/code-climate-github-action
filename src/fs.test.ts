@@ -1,7 +1,6 @@
-import {beforeEach, describe, expect, it, vi} from 'vitest'
-
-import {getTemporalFileAbsolutePath} from './fs'
-import fs from 'fs'
+import fs from 'node:fs'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { getTemporalFileAbsolutePath } from './fs'
 
 vi.mock('fs')
 
@@ -9,8 +8,8 @@ beforeEach(() => {
   vi.mocked(fs.mkdtemp).mockImplementation((prefix, callback) =>
     callback(null, `/tmp/${prefix}-123456`)
   )
-  vi.mocked(fs.writeFile).mockImplementation((pathToFile, content, callback) =>
-    callback(null)
+  vi.mocked(fs.writeFile).mockImplementation(
+    (_pathToFile, _content, callback) => callback(null)
   )
 })
 
@@ -39,7 +38,7 @@ describe('#getTemporalFileAbsolutePath', () => {
   })
 
   it('should reject promise if could not create parent folder', async () => {
-    vi.mocked(fs.mkdtemp).mockImplementation((prefix, callback) =>
+    vi.mocked(fs.mkdtemp).mockImplementation((_prefix, callback) =>
       callback(new Error('Forced error'), '')
     )
 
@@ -52,7 +51,7 @@ describe('#getTemporalFileAbsolutePath', () => {
   })
 
   it('should reject promise if could not create the file', async () => {
-    vi.mocked(fs.writeFile).mockImplementation((prefix, content, callback) =>
+    vi.mocked(fs.writeFile).mockImplementation((_prefix, _content, callback) =>
       callback(new Error('Forced error'))
     )
 

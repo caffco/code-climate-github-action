@@ -1,11 +1,9 @@
-import {beforeEach, describe, expect, it, vi} from 'vitest'
-
-import {isDebug, warning} from '@actions/core'
-import {exec} from '@actions/exec'
-import {create} from '@actions/glob'
-import {getEnvironment} from './environment'
-
-import {runBeforeBuild, collectCoverage, runAfterBuild} from './codeclimate'
+import { isDebug, warning } from '@actions/core'
+import { exec } from '@actions/exec'
+import { create } from '@actions/glob'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { collectCoverage, runAfterBuild, runBeforeBuild } from './codeclimate'
+import { getEnvironment } from './environment'
 
 vi.mock('@actions/core')
 vi.mock('@actions/glob')

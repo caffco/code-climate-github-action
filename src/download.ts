@@ -1,10 +1,10 @@
-import {platform} from 'os'
-import fs from 'fs'
+import fs from 'node:fs'
+import { platform } from 'node:os'
+import { promisify } from 'node:util'
 import * as core from '@actions/core'
 import fetch from 'node-fetch'
-import {promisify} from 'util'
 
-import {getTemporalFileAbsolutePath} from './fs'
+import { getTemporalFileAbsolutePath } from './fs'
 
 const chmodAsync = promisify(fs.chmod)
 const statAsync = promisify(fs.stat)
@@ -34,7 +34,7 @@ export async function downloadCodeClimateExecutable(): Promise<string> {
 
   await new Promise<void>((resolve, reject) => {
     writeStream.on('close', () => resolve())
-    writeStream.on('error', error => reject(error))
+    writeStream.on('error', (error) => reject(error))
   })
 
   const stats = await statAsync(temporalFileAbsolutePath)

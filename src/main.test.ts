@@ -1,8 +1,7 @@
-import {beforeEach, describe, expect, it, vi} from 'vitest'
-
-import {getOptionsFromGithubActionInput} from './github'
-import {downloadCodeClimateExecutable} from './download'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import * as codeclimate from './codeclimate'
+import { downloadCodeClimateExecutable } from './download'
+import { getOptionsFromGithubActionInput } from './github'
 import main from './main'
 
 vi.mock('./github')

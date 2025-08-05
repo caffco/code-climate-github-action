@@ -1,6 +1,6 @@
-import {describe, expect, it, vi} from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
-import {getEnvironment} from './environment'
+import { getEnvironment } from './environment'
 
 vi.mock('@actions/github', () => ({
   context: {
